@@ -2,7 +2,7 @@
 // 所有有效兑换码（初始）
 window.VALID_CODES = [
     'A7B9-2K4M-PQ8R',
-     'A7B9-2K4M-PQ8R',
+    'A7B9-2K4M-PQ8R',
     'A3Z9-L1P5-T6WQ',
     'A4HJ-6K8L-2N3P',
     'A5ST-9U7V-1W2X',

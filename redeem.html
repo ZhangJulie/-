@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性格测试兑换 · 简洁入口</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f4f7fb 0%, #e9eef4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 40px;
+      box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25), 0 8px 24px -6px rgba(0, 32, 64, 0.1);
+      width: 100%;
+      max-width: 460px;
+      padding: 2.5rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1a2639;
+      margin-bottom: 0.3rem;
+      text-align: center;
+      background: linear-gradient(135deg, #1e2b3c, #2c3e50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #5b6f82;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px dashed #cbd5e1;
+      padding-bottom: 0.75rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .code-input {
+      width: 100%;
+      padding: 0 20px;
+      height: 58px;
+      font-size: 1.1rem;
+      font-family: 'Inter', monospace;
+      background: #ffffffd9;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      outline: none;
+      transition: all 0.2s;
+      color: #1e293b;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .code-input:focus {
+      border-color: #7c9bc0;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(124, 155, 192, 0.2), inset 0 1px 3px #fff;
+    }
+
+    .code-input::placeholder {
+      color: #9aaebb;
+      font-weight: 400;
+      font-size: 1rem;
+      letter-spacing: normal;
+    }
+
+    .enter-btn {
+      background: #2d3e58;
+      border: none;
+      height: 58px;
+      border-radius: 24px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 10px 18px -8px #1e2f3f80;
+      border: 1px solid #ffffff30;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .enter-btn:hover {
+      background: #1f2e44;
+      box-shadow: 0 14px 24px -8px #162433b3;
+    }
+
+    .enter-btn:active {
+      transform: scale(0.97);
+      background: #17212f;
+    }
+
+    /* 极简辅助信息 — 同时作为预留入口的视觉提示（轻量） */
+    .reserved-hint {
+      margin-top: 2rem;
+      font-size: 0.7rem;
+      color: #8899aa;
+      text-align: center;
+      border-top: 1px dotted #ccdbe9;
+      padding-top: 1rem;
+      opacity: 0.65;
+    }
+
+    .reserved-hint span {
+      background: #eef4fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 30px;
+      font-family: monospace;
+    }
+
+    /* 预留兑换码补充入口 — 代码内部已详细配置 (见JavaScript) */
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>⚡ 性格测试兑换</h1>
+    <div class="sub">输入兑换码 · 即刻进入</div>
+
+    <!-- 主交互区 -->
+    <div class="input-group">
+      <input type="text" id="redeemCode" class="code-input" placeholder="例如：MBTI2025" autofocus spellcheck="false">
+      <button id="enterBtn" class="enter-btn">
+        <span>进入</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- 极简视觉占位，提示“预留配置入口” (同时代码中已预留更强大的配置区) -->
+    <div class="reserved-hint">
+      <span>⚙️ 预留兑换码补充入口 (见代码 config.validCodes)</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // =========================================================================
+      // 预留兑换码补充入口 · 灵活配置区
+      // 您可以在此轻松扩展有效兑换码列表、修改目标测试页面URL，或者自定义验证逻辑
+      // =========================================================================
+      const CONFIG = {
+        // 【测试页面地址】请替换为您的真实测试页面URL（例如：https://你的测试页面.com）
+        // 当前使用 httpbin.org/get 仅作演示，它会回显您传递的参数，方便测试。
+        testPageUrl: 'https://httpbin.org/get',   // ← 将此URL替换为您真实的测试页面地址
+
+        // 【预留兑换码补充入口】有效兑换码列表 (未来可开启验证)
+        // 目前为空数组，表示不限制兑换码（任何非空code均可跳转）。
+        // 当您想启用验证时，只需向数组中添加有效兑换码字符串，例如 ['MBTI2025', 'DISC001', 'CODE888']
+        // 程序会自动检查用户输入的兑换码是否存在于本列表中，若不存在将提示“无效兑换码”。
+        validCodes: [],  // ← 在此补充有效兑换码，例如 ['VIP2024', 'TEST123']
+
+        // 【可选】自定义验证函数 (更灵活的预留入口)
+        // 如果内置的数组验证不能满足需求 (例如需要调用接口、正则匹配)，可以修改下面的 validateCode 函数。
+        // 当前函数已预留并默认调用数组验证方式，您可以直接覆盖它。
+        customValidate: null   // 示例: function(code) { return /^[A-Z]{3,8}$/.test(code); }
+      };
+
+      // ---------- 以下为逻辑实现，无需频繁修改 ----------
+      const codeInput = document.getElementById('redeemCode');
+      const enterBtn = document.getElementById('enterBtn');
+
+      // 合并验证逻辑 (预留入口：可在此自由扩展验证方式)
+      function isCodeValid(code) {
+        // 如果提供了customValidate且为函数，优先使用
+        if (typeof CONFIG.customValidate === 'function') {
+          return CONFIG.customValidate(code);
+        }
+
+        // 默认验证逻辑：如果 validCodes 数组有内容，则检查code是否在数组中；
+        // 若数组为空，则视为“不限制兑换码”，返回true（但需配合非空检查）
+        if (CONFIG.validCodes.length > 0) {
+          return CONFIG.validCodes.includes(code);
+        }
+        // 无限制模式：任何非空字符串均合法（非空检查在调用前已处理）
+        return true;
+      }
+
+      // 构建带code参数的跳转URL (健壮处理: 支持已有query的URL)
+      function buildTargetUrl(code) {
+        let base = CONFIG.testPageUrl;
+        if (!base) {
+          alert('错误：测试页面地址未配置 (CONFIG.testPageUrl)');
+          return '#';
+        }
+
+        const encodedCode = encodeURIComponent(code);
+
+        // 尝试使用URL构造函数处理绝对地址 (更精确地操作searchParams)
+        try {
+          // 如果是绝对URL（以http://或https://开头），使用URL对象
+          if (base.startsWith('http://') || base.startsWith('https://')) {
+            const url = new URL(base);
+            url.searchParams.set('code', encodedCode);  // set会覆盖或新建code参数
+            return url.toString();
+          }
+        } catch (e) {
+          console.warn('URL解析失败，使用字符串回退模式', e);
+        }
+
+        // 降级处理：对于相对路径或无法解析的URL，采用智能拼接
+        const separator = base.includes('?') ? '&' : '?';
+        return `${base}${separator}code=${encodedCode}`;
+      }
+
+      // 执行跳转前的验证与处理
+      function handleRedeem() {
+        const rawCode = codeInput.value;
+        const trimmedCode = rawCode.trim();
+
+        // 1. 非空检查
+        if (trimmedCode === '') {
+          alert('请输入兑换码');
+          codeInput.focus();
+          return;
+        }
+
+        // 2. 调用预留的验证逻辑 (基于CONFIG.validCodes 或 customValidate)
+        if (!isCodeValid(trimmedCode)) {
+          alert('无效兑换码，请核对后重试');
+          codeInput.value = '';    // 清空方便重新输入（可选）
+          codeInput.focus();
+          return;
+        }
+
+        // 3. 构建目标URL并跳转 (当前页面跳转，也可根据需要改为 window.open)
+        const targetUrl = buildTargetUrl(trimmedCode);
+        if (targetUrl && targetUrl !== '#') {
+          console.log('即将跳转至：', targetUrl);
+          // 使用 location.href 跳转（同一窗口覆盖）
+          window.location.href = targetUrl;
+          // 如果想在新标签页打开，可以用下面这行替换上一行:
+          // window.open(targetUrl, '_blank');
+        }
+      }
+
+      // 监听按钮点击
+      enterBtn.addEventListener('click', handleRedeem);
+
+      // 监听输入框“回车”事件
+      codeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();  // 防止任何意外表单提交
+          handleRedeem();
+        }
+      });
+
+      // 可选：自动去除首尾空格（不影响实际使用）
+      codeInput.addEventListener('blur', () => {
+        codeInput.value = codeInput.value.trim();
+      });
+
+      // 友好的控制台提示：展示预留配置入口 (方便开发者/管理员)
+      console.log(
+        '%c🔧 性格测试兑换 · 预留配置入口\n%cvalidCodes 数组当前为空(不限制兑换码)。\n如需启用验证，请在代码中向 CONFIG.validCodes 添加有效兑换码。',
+        'background:#1e2b3c; color:#f0f6ff; font-size:1.2rem; padding:0.2rem 0.6rem; border-radius:6px;',
+        'background:#f0f3f8; color:#1e2b3c; padding:0.3rem; border-radius:4px;'
+      );
+    })();
+  </script>
+
+  <!-- 
+    ==================== 预留补充说明 ====================
+    1. 兑换码补充入口: 脚本中 CONFIG.validCodes 数组 (第32行)
+       您可以在该数组中添加允许的兑换码字符串，例如 ['MBTI2025','OPENAI88'] 即可开启验证。
+    2. 测试页面地址: CONFIG.testPageUrl (第26行) 默认为 https://httpbin.org/get (演示用)
+       请务必替换为您实际的测试页面地址，例如 https://你的测试页面.com
+    3. 自定义验证: CONFIG.customValidate (第39行) 可接受一个函数，完全自定义验证逻辑。
+    4. 所有跳转均自动携带 ?code=用户输入值，URL编码已处理。
+    ====================================================
+  -->
+</body>
+</html>

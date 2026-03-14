@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>性格测试兑换</title>
+    <title>性格测试兑换 · 多测试版</title>
     <!-- 引入外部兑换码列表 -->
     <script src="codes.js"></script>
     <style>
@@ -100,58 +100,65 @@
 <body>
     <div class="card">
         <h1>⚡ 性格测试兑换</h1>
-        <div class="sub">输入兑换码 · 即刻进入</div>
+        <div class="sub">输入兑换码 · 自动识别测试类型</div>
         <div class="input-group">
-            <input type="text" id="redeemCode" class="code-input" placeholder="例如：TEST001" autofocus>
+            <input type="text" id="redeemCode" class="code-input" placeholder="例如：A7B9-2K4M-PQ8R" autofocus>
             <button id="enterBtn" class="enter-btn">
                 <span>进入</span>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </div>
         <div class="reserved-hint">
-            ⚙️ 兑换码统一在 codes.js 中管理，可随时增加
+            ⚙️ 兑换码首位字母决定测试类型（A/B/C/D），可在代码中扩展
         </div>
     </div>
 
     <script>
         (function() {
+            // ========== 配置区 ==========
             // 从外部文件读取兑换码列表
-            const CONFIG = {
-                // ⚠️ 重要：请将下方地址替换为您的测试页面真实URL
-                testPageUrl: 'https://zhangjulie.github.io/-/test.html',  // ← 替换成您的测试页面地址
-                validCodes: window.VALID_CODES || [],  // 从 codes.js 获取
-                customValidate: null
+            const VALID_CODES = window.VALID_CODES || [];
+
+            // 测试页面映射：根据兑换码第一个字符（A/B/C/D）跳转到不同页面
+            const TEST_PAGE_MAP = {
+                'A': 'https://zhangjulie.github.io/-/test.html',   // 当前性格测试
+                'B': 'https://zhangjulie.github.io/-/test-b.html', // 预留，可替换
+                'C': 'https://zhangjulie.github.io/-/test-c.html', // 预留
+                'D': 'https://zhangjulie.github.io/-/test-d.html'  // 预留
             };
 
+            // 默认测试页面（当首位字母无映射时使用，这里设为空，后面会报错）
+            const DEFAULT_TEST_PAGE = null;
+
+            // ========== 逻辑代码 ==========
             const codeInput = document.getElementById('redeemCode');
             const enterBtn = document.getElementById('enterBtn');
 
+            // 验证兑换码是否在有效列表中
             function isCodeValid(code) {
-                if (typeof CONFIG.customValidate === 'function') {
-                    return CONFIG.customValidate(code);
-                }
-                if (CONFIG.validCodes.length > 0) {
-                    return CONFIG.validCodes.includes(code);
-                }
-                return true; // 无限制模式（一般不会走到这里）
+                return VALID_CODES.includes(code);
             }
 
-            function buildTargetUrl(code) {
-                let base = CONFIG.testPageUrl;
-                if (!base) {
-                    alert('错误：测试页面地址未配置');
-                    return '#';
+            // 根据兑换码获取目标测试页面URL
+            function getTargetUrlByCode(code) {
+                if (!code || code.length === 0) return null;
+                const firstChar = code.charAt(0).toUpperCase(); // 提取首位并大写
+                const baseUrl = TEST_PAGE_MAP[firstChar] || DEFAULT_TEST_PAGE;
+                if (!baseUrl) {
+                    alert(`未配置该类型测试（${firstChar}），请联系管理员`);
+                    return null;
                 }
-                const encodedCode = encodeURIComponent(code);
+                // 将完整兑换码作为参数附加
                 try {
-                    if (base.startsWith('http://') || base.startsWith('https://')) {
-                        const url = new URL(base);
-                        url.searchParams.set('code', encodedCode);
+                    if (baseUrl.startsWith('http://') || baseUrl.startsWith('https://')) {
+                        const url = new URL(baseUrl);
+                        url.searchParams.set('code', encodeURIComponent(code));
                         return url.toString();
                     }
                 } catch (e) {}
-                const separator = base.includes('?') ? '&' : '?';
-                return `${base}${separator}code=${encodedCode}`;
+                // 降级拼接
+                const separator = baseUrl.includes('?') ? '&' : '?';
+                return `${baseUrl}${separator}code=${encodeURIComponent(code)}`;
             }
 
             function handleRedeem() {
@@ -161,16 +168,19 @@
                     codeInput.focus();
                     return;
                 }
+                // 1. 验证兑换码是否有效
                 if (!isCodeValid(rawCode)) {
                     alert('无效兑换码，请核对后重试');
                     codeInput.value = '';
                     codeInput.focus();
                     return;
                 }
-                const targetUrl = buildTargetUrl(rawCode);
-                if (targetUrl && targetUrl !== '#') {
-                    window.location.href = targetUrl;  // 跳转到测试页面
-                }
+                // 2. 根据首位字母获取目标URL
+                const targetUrl = getTargetUrlByCode(rawCode);
+                if (!targetUrl) return; // 已弹窗提示
+
+                // 3. 跳转
+                window.location.href = targetUrl;
             }
 
             enterBtn.addEventListener('click', handleRedeem);

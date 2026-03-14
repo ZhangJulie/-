@@ -3,518 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>性格测试 · 单题分页版</title>
+    <title>真实性格测试</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            background: linear-gradient(145deg, #f0f5fa, #e1e9f2);
             min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(145deg, #f5f7fa 0%, #e9ecf2 100%);
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 16px;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
         }
-        .card {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0,10,30,0.2), 0 6px 12px rgba(0,0,0,0.1);
+        .test-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            box-shadow: 0 25px 45px -18px #1e3b5b;
             width: 100%;
-            max-width: 560px;
-            padding: 32px 24px;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.5);
+            max-width: 750px;
+            padding: 2.2rem 2rem;
+            border: 1px solid rgba(255,255,255,0.7);
         }
-        h2 {
-            margin: 0 0 8px 0;
-            font-weight: 600;
-            font-size: 1.8rem;
-            color: #1e293b;
-            letter-spacing: -0.02em;
-        }
-        .subtitle {
-            color: #475569;
-            margin-bottom: 28px;
-            font-size: 1rem;
-            border-left: 4px solid #8b5cf6;
-            padding-left: 16px;
-            background: rgba(139,92,246,0.05);
-            border-radius: 0 8px 8px 0;
-            line-height: 1.4;
-        }
-        .code-area {
-            margin: 24px 0 16px;
-        }
-        label {
-            font-weight: 500;
-            color: #334155;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .input-group {
+        .header {
             display: flex;
-            gap: 12px;
             flex-wrap: wrap;
-        }
-        input {
-            flex: 1;
-            padding: 16px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 60px;
-            font-size: 1rem;
-            background: white;
-            outline: none;
-            transition: 0.15s;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-        input:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 4px rgba(139,92,246,0.2);
-        }
-        button {
-            background: #1e293b;
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 16px 28px;
-            border-radius: 60px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.15s;
-            border: 2px solid transparent;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            white-space: nowrap;
-        }
-        button:hover {
-            background: #0f172a;
-            transform: scale(0.98);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        button:active {
-            transform: scale(0.96);
-        }
-        button.secondary {
-            background: white;
-            color: #1e293b;
-            border: 2px solid #cbd5e1;
-            box-shadow: none;
-        }
-        button.secondary:hover {
-            background: #f1f5f9;
-        }
-        .message {
-            margin-top: 20px;
-            padding: 12px 16px;
-            border-radius: 40px;
-            background: #fee2e2;
-            color: #991b1b;
-            font-weight: 500;
-            display: none;
-        }
-        .question-header {
-            display: flex;
-            justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 28px;
-        }
-        .question-num {
-            background: #f1f5f9;
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #334155;
-            font-size: 0.9rem;
-        }
-        .question-text {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 32px;
-            line-height: 1.3;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin: 32px 0;
-        }
-        .option-btn {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 60px;
-            padding: 18px 24px;
-            font-size: 1.1rem;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-        .option-btn:hover {
-            border-color: #94a3b8;
-            background: #f8fafc;
-        }
-        .option-btn.selected {
-            border-color: #8b5cf6;
-            background: #f5f3ff;
-            box-shadow: 0 8px 16px rgba(139,92,246,0.15);
-        }
-        .option-letter {
-            width: 36px;
-            height: 36px;
-            background: #e2e8f0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #1e293b;
-        }
-        .option-btn.selected .option-letter {
-            background: #8b5cf6;
-            color: white;
-        }
-        .nav-buttons {
-            display: flex;
             justify-content: space-between;
-            gap: 12px;
-            margin-top: 16px;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #dde5ed;
+            padding-bottom: 0.8rem;
         }
-        .result-box {
-            text-align: center;
-        }
-        .result-type {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 24px 0 16px;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #253c5c, #1f334a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .result-desc {
-            background: #f1f5f9;
-            padding: 24px;
-            border-radius: 32px;
-            line-height: 1.6;
-            color: #1e293b;
-            text-align: left;
-            margin: 24px 0;
-            font-size: 1.1rem;
-        }
-        .used-note {
+        .code-badge {
+            background: #dce7f3;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
             font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 20px;
+            color: #1f3a57;
+            border: 1px solid #b5c9de;
         }
-        hr {
+        .code-badge span {
+            font-family: monospace;
+            font-weight: 700;
+            background: #2a405b;
+            color: white;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-left: 0.4rem;
+        }
+        .intro {
+            font-size: 1rem;
+            color: #2e4a6b;
+            margin-bottom: 2rem;
+            background: #eaf1fa;
+            padding: 0.8rem 1.2rem;
+            border-radius: 100px;
+            display: inline-block;
+        }
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2.2rem 0;
+        }
+        .question-item {
+            background: #ffffffb8;
+            border-radius: 30px;
+            padding: 1.5rem 1.8rem;
+            border: 1px solid white;
+            box-shadow: 0 6px 14px #c8d5e3;
+        }
+        .q-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f344b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .q-num {
+            background: #34597a;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-right: 12px;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.4rem 1rem 0.4rem 0.5rem;
+            border-radius: 40px;
+            background: #f3f9ff;
+            border: 1px solid #c1d6ec;
+        }
+        .option.selected {
+            background: #d7e6ff;
+            border-color: #597e9f;
+        }
+        .option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #5d7fa0;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        .option input[type="radio"]:checked {
+            background: #1f3e5c;
+            border-color: #1f3e5c;
+            box-shadow: inset 0 0 0 4px white;
+        }
+        .action-area {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem;
+        }
+        .result-btn {
+            background: #2d4b6e;
             border: none;
-            border-top: 2px dashed #cbd5e1;
-            margin: 24px 0 16px;
+            padding: 0.9rem 2.2rem;
+            border-radius: 40px;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 18px -8px #1c314a;
+        }
+        .reset-btn {
+            background: transparent;
+            border: 2px solid #6b85a0;
+            color: #2b405b;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .result-box {
+            background: #e4eefa;
+            border-radius: 30px;
+            padding: 1.6rem 2rem;
+            margin-top: 1.5rem;
+            border-left: 8px solid #34597a;
+            display: none;
+        }
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 650;
+            color: #142b41;
+            margin-bottom: 0.3rem;
+        }
+        .result-desc {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #1d3146;
+        }
+        .footnote {
+            font-size: 0.85rem;
+            color: #6c7f96;
+            margin-top: 1rem;
+            border-top: 1px dashed #b7cade;
+            padding-top: 0.8rem;
+            text-align: right;
         }
     </style>
 </head>
 <body>
-<div class="card" id="app">
-    <!-- 动态内容由js渲染 -->
-</div>
+    <div class="test-card">
+        <div class="header">
+            <h1>🧠 性格测试</h1>
+            <div class="code-badge">
+                兑换码 <span id="codeValue">—</span>
+            </div>
+        </div>
+        <div class="intro">✨ 请根据第一感觉选择，共5题</div>
 
-<script>
-    (function() {
-        // ---------- 兑换码列表 (20个) ----------
-        const VALID_CODES = [
-            "A7B9-2K4M-PQ8R",
-            "X3Z9-L1P5-T6WQ",
-            "G4HJ-6K8L-2N3P",
-            "R5ST-9U7V-1W2X",
-            "M8N2-B4V5-C6X7",
-            "K1L9-P3O4-I5U6",
-            "Q2W3-E4R5-T6Y7",
-            "U9I0-O8P7-Z6X5",
-            "F5G6-H7J8-K9L0",
-            "V4B5-N6M7-Q8W9",
-            "J2K3-L4Z5-X6C7",
-            "Y7U8-I9O0-P1Q2",
-            "D3E4-R5F6-G7H8",
-            "S2A3-Q4W5-E6R7",
-            "C8V9-B0N1-M2K3",
-            "L4P5-O6I7-U8Y9",
-            "Z1X2-C3V4-B5N6",
-            "H9G8-F7D6-S5A4",
-            "T6Y5-R4E3-W2Q1",
-            "N3M4-K5J6-H7G8"
-        ];
+        <div class="questions-container" id="questionsContainer"></div>
 
-        // ---------- 题库 (5个问题) ----------
-        const QUESTIONS = [
-            { text: "当你空闲时，你更愿意？", optionA: "和朋友一起聚会、聊天或参加活动", optionB: "独自一人看书、听音乐或思考" },
-            { text: "在团队合作中，你通常扮演什么角色？", optionA: "活跃气氛、组织协调，喜欢带动大家", optionB: "默默做事、提供创意，专注于任务本身" },
-            { text: "做决定时，你更依赖？", optionA: "内心的感受、直觉和价值观", optionB: "逻辑分析、客观事实和数据" },
-            { text: "面对新环境或陌生人，你通常？", optionA: "很快适应，主动结识新朋友", optionB: "需要时间观察，慢慢融入" },
-            { text: "你更喜欢哪种类型的电影？", optionA: "喜剧、爱情、动作片（情感丰富、剧情为主）", optionB: "科幻、悬疑、纪录片（理性烧脑、知识性强）" }
-        ];
+        <div class="action-area">
+            <button class="result-btn" id="submitBtn">🔍 查看结果</button>
+            <button class="reset-btn" id="resetBtn">↻ 重新选择</button>
+        </div>
 
-        // ---------- 状态管理 ----------
-        // 已使用的兑换码 (从localStorage读取)
-        let usedCodes = [];
-        try {
-            const stored = localStorage.getItem('used_codes');
-            if (stored) {
-                usedCodes = JSON.parse(stored);
-            } else {
-                usedCodes = [];
+        <div class="result-box" id="resultBox">
+            <div class="result-title" id="resultType"></div>
+            <div class="result-desc" id="resultDesc"></div>
+        </div>
+
+        <div class="footnote">⚡ 基于真实性格维度 · 结果仅供参考</div>
+    </div>
+
+    <script>
+        (function() {
+            // 从URL获取兑换码
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param) || '';
             }
-        } catch (e) {
-            usedCodes = [];
-        }
+            const code = getQueryParam('code');
+            document.getElementById('codeValue').textContent = code || '无';
 
-        // 当前页面状态: 'code' | 'question' | 'result'
-        let currentState = 'code';
-        // 当前使用的兑换码 (验证成功后记录)
-        let currentCode = null;
-        // 当前题号 (0-4)
-        let currentQuestionIndex = 0;
-        // 用户答案数组: 每个元素为 'A' 或 'B'
-        let answers = [];
+            // 题目数据
+            const questions = [
+                { text: '当你空闲时，你更愿意？', optionA: '和朋友一起聚会、聊天或参加活动', optionB: '独自一人看书、听音乐或思考' },
+                { text: '在团队合作中，你通常扮演什么角色？', optionA: '活跃气氛、组织协调，喜欢带动大家', optionB: '默默做事、提供创意，专注于任务本身' },
+                { text: '做决定时，你更依赖？', optionA: '内心的感受、直觉和价值观', optionB: '逻辑分析、客观事实和数据' },
+                { text: '面对新环境或陌生人，你通常？', optionA: '很快适应，主动结识新朋友', optionB: '需要时间观察，慢慢融入' },
+                { text: '你更喜欢哪种类型的电影？', optionA: '喜剧、爱情、动作片（情感丰富、剧情为主）', optionB: '科幻、悬疑、纪录片（理性烧脑、知识性强）' }
+            ];
 
-        // 保存已使用码到localStorage
-        function saveUsedCodes() {
-            try {
-                localStorage.setItem('used_codes', JSON.stringify(usedCodes));
-            } catch (e) {}
-        }
+            // 结果文案
+            const resultMap = {
+                outgoing: { title: '🎉 外向感性型', desc: '你热情开朗，善于交际，富有同情心。你喜欢与人互动，容易察觉他人的情绪，做事常凭直觉和感受。在团队中，你是气氛担当，总能带来活力。但有时可能过于感性，需要适当平衡理性思考。' },
+                inward: { title: '🌿 内向理性型', desc: '你沉稳冷静，善于分析，独立自主。你喜欢深度思考，注重逻辑和事实，对新事物会谨慎观察。在团队中，你是可靠的智囊，总能提出独到见解。但有时可能显得疏离，记得多与他人分享你的想法。' },
+                balanced: { title: '⚖️ 平衡型', desc: '你兼具感性与理性，适应力强。你能在社交和独处之间自如切换，既懂得倾听内心，也擅长逻辑分析。这种平衡让你在处理各种问题时游刃有余，是朋友眼中可靠又温和的存在。' }
+            };
 
-        // 验证兑换码
-        function isValidCode(code) {
-            return VALID_CODES.includes(code) && !usedCodes.includes(code);
-        }
-
-        // 使用兑换码
-        function useCode(code) {
-            if (isValidCode(code)) {
-                usedCodes.push(code);
-                saveUsedCodes();
-                currentCode = code;
-                return true;
-            }
-            return false;
-        }
-
-        // 重置测试 (不清除已使用码，只重置状态)
-        function resetTest(keepCode = false) {
-            currentState = 'code';
-            currentQuestionIndex = 0;
-            answers = [];
-            if (!keepCode) currentCode = null;
-            render();
-        }
-
-        // 开始测试 (在验证成功后调用)
-        function startTest() {
-            currentState = 'question';
-            currentQuestionIndex = 0;
-            answers = QUESTIONS.map(() => null); // 初始为空
-            render();
-        }
-
-        // 选择答案
-        function selectAnswer(questionIdx, option) {
-            answers[questionIdx] = option;
-            render(); // 刷新高亮
-        }
-
-        // 下一页
-        function nextPage() {
-            if (currentQuestionIndex < QUESTIONS.length - 1) {
-                currentQuestionIndex++;
-                render();
-            } else {
-                // 已完成所有题目，显示结果
-                currentState = 'result';
-                render();
-            }
-        }
-
-        // 上一页
-        function prevPage() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                render();
-            }
-        }
-
-        // 计算结果类型
-        function getResultType() {
-            const countA = answers.filter(a => a === 'A').length;
-            const countB = answers.filter(a => a === 'B').length;
-            if (countA > countB) return '外向感性型';
-            if (countB > countA) return '内向理性型';
-            return '平衡型';
-        }
-
-        function getResultDescription(type) {
-            if (type === '外向感性型') {
-                return "你热情开朗，善于交际，富有同情心。你喜欢与人互动，容易察觉他人的情绪，做事常凭直觉和感受。在团队中，你是气氛担当，总能带来活力。但有时可能过于感性，需要适当平衡理性思考。";
-            } else if (type === '内向理性型') {
-                return "你沉稳冷静，善于分析，独立自主。你喜欢深度思考，注重逻辑和事实，对新事物会谨慎观察。在团队中，你是可靠的智囊，总能提出独到见解。但有时可能显得疏离，记得多与他人分享你的想法。";
-            } else {
-                return "你兼具感性与理性，适应力强。你能在社交和独处之间自如切换，既懂得倾听内心，也擅长逻辑分析。这种平衡让你在处理各种问题时游刃有余，是朋友眼中可靠又温和的存在。";
-            }
-        }
-
-        // 渲染主界面
-        function render() {
-            const app = document.getElementById('app');
-            if (!app) return;
-
-            let html = '';
-
-            if (currentState === 'code') {
-                // ---------- 兑换码页面 ----------
-                html = `
-                    <h2>🔐 性格测试</h2>
-                    <div class="subtitle">每个兑换码仅可使用一次，请输入有效代码开始</div>
-                    <div class="code-area">
-                        <label for="codeInput">兑换码</label>
-                        <div class="input-group">
-                            <input type="text" id="codeInput" placeholder="例如 A7B9-2K4M-PQ8R" value="">
-                            <button id="submitCode">验证</button>
+            // 渲染题目
+            const container = document.getElementById('questionsContainer');
+            function renderQuestions() {
+                let html = '';
+                questions.forEach((q, index) => {
+                    html += `
+                        <div class="question-item" data-qindex="${index}">
+                            <div class="q-title"><span class="q-num">${index+1}</span> ${q.text}</div>
+                            <div class="options">
+                                <label class="option" data-q="${index}" data-opt="A">
+                                    <input type="radio" name="q${index}" value="A"> 
+                                    <span>A. ${q.optionA}</span>
+                                </label>
+                                <label class="option" data-q="${index}" data-opt="B">
+                                    <input type="radio" name="q${index}" value="B"> 
+                                    <span>B. ${q.optionB}</span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="message" id="codeMessage"></div>
-                    <hr>
-                    <div style="color:#64748b; font-size:0.9rem; text-align:center;">
-                        ✨ 共20个兑换码，每个仅限一次<br>输入正确的码即可开始5道题的单页测试
-                    </div>
-                `;
-            } else if (currentState === 'question') {
-                // ---------- 问题页面 ----------
-                const q = QUESTIONS[currentQuestionIndex];
-                const selected = answers[currentQuestionIndex];
-                const isFirst = currentQuestionIndex === 0;
-                const isLast = currentQuestionIndex === QUESTIONS.length - 1;
+                    `;
+                });
+                container.innerHTML = html;
 
-                // 生成选项按钮
-                const optionABtn = `
-                    <div class="option-btn ${selected === 'A' ? 'selected' : ''}" data-opt="A">
-                        <span class="option-letter">A</span>
-                        <span>${q.optionA}</span>
-                    </div>
-                `;
-                const optionBBtn = `
-                    <div class="option-btn ${selected === 'B' ? 'selected' : ''}" data-opt="B">
-                        <span class="option-letter">B</span>
-                        <span>${q.optionB}</span>
-                    </div>
-                `;
-
-                html = `
-                    <div class="question-header">
-                        <span class="question-num">${currentQuestionIndex+1} / ${QUESTIONS.length}</span>
-                        <span style="color:#64748b;">请选择最符合的</span>
-                    </div>
-                    <div class="question-text">${q.text}</div>
-                    <div class="options" id="optionsContainer">
-                        ${optionABtn}
-                        ${optionBBtn}
-                    </div>
-                    <div class="nav-buttons">
-                        <button class="secondary" id="prevBtn" ${isFirst ? 'disabled style="opacity:0.4;"' : ''}>← 上一题</button>
-                        <button id="nextBtn">${isLast ? '完成' : '下一题 →'}</button>
-                    </div>
-                `;
-            } else if (currentState === 'result') {
-                // ---------- 结果页面 ----------
-                const type = getResultType();
-                const desc = getResultDescription(type);
-                html = `
-                    <h2>📋 你的性格类型</h2>
-                    <div class="result-box">
-                        <div class="result-type">${type}</div>
-                        <div class="result-desc">${desc}</div>
-                        <button id="newTestBtn" class="secondary">使用新兑换码再测一次</button>
-                        <div class="used-note">你使用的兑换码: ${currentCode} (已失效)</div>
-                    </div>
-                `;
-            }
-
-            app.innerHTML = html;
-
-            // ---------- 绑定事件 ----------
-            if (currentState === 'code') {
-                const submitBtn = document.getElementById('submitCode');
-                const input = document.getElementById('codeInput');
-                const msgDiv = document.getElementById('codeMessage');
-
-                if (submitBtn) {
-                    submitBtn.addEventListener('click', () => {
-                        const code = input.value.trim();
-                        if (!code) {
-                            msgDiv.style.display = 'block';
-                            msgDiv.textContent = '请输入兑换码';
-                            return;
+                // 高亮选中的选项
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.addEventListener('click', function() {
+                        const name = this.querySelector('input')?.name;
+                        if (name) {
+                            document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                                r.closest('.option')?.classList.remove('selected');
+                            });
                         }
-                        if (isValidCode(code)) {
-                            useCode(code);
-                            startTest();
-                        } else {
-                            msgDiv.style.display = 'block';
-                            if (usedCodes.includes(code)) {
-                                msgDiv.textContent = '该兑换码已使用，无效';
-                            } else {
-                                msgDiv.textContent = '无效的兑换码，请检查格式';
-                            }
-                        }
-                    });
-                }
-            } else if (currentState === 'question') {
-                // 选项点击事件
-                const options = document.querySelectorAll('.option-btn');
-                options.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const opt = btn.getAttribute('data-opt'); // 'A' 或 'B'
-                        selectAnswer(currentQuestionIndex, opt);
+                        this.classList.add('selected');
                     });
                 });
-
-                // 上一页
-                const prevBtn = document.getElementById('prevBtn');
-                if (prevBtn && currentQuestionIndex > 0) {
-                    prevBtn.addEventListener('click', prevPage);
-                }
-
-                // 下一页 / 完成
-                const nextBtn = document.getElementById('nextBtn');
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        // 检查当前题目是否已选
-                        if (answers[currentQuestionIndex] === null) {
-                            alert('请先选择一个选项');
-                            return;
-                        }
-                        nextPage();
-                    });
-                }
-            } else if (currentState === 'result') {
-                const newBtn = document.getElementById('newTestBtn');
-                if (newBtn) {
-                    newBtn.addEventListener('click', () => {
-                        resetTest(false); // 回到兑换码页，不清除已使用码
-                    });
-                }
             }
-        }
+            renderQuestions();
 
-        // 初始化渲染
-        render();
-    })();
-</script>
+            // 提交结果
+            const submitBtn = document.getElementById('submitBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultBox = document.getElementById('resultBox');
+            const resultType = document.getElementById('resultType');
+            const resultDesc = document.getElementById('resultDesc');
+
+            function calculateResult() {
+                let countA = 0, countB = 0, allSelected = true;
+                for (let i = 0; i < questions.length; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    let selected = null;
+                    for (let r of radios) {
+                        if (r.checked) { selected = r.value; break; }
+                    }
+                    if (selected === 'A') countA++;
+                    else if (selected === 'B') countB++;
+                    else allSelected = false;
+                }
+                if (!allSelected) { alert('请完成所有题目'); return null; }
+                if (countA > countB && countA >= 3) return resultMap.outgoing;
+                if (countB > countA && countB >= 3) return resultMap.inward;
+                return resultMap.balanced;
+            }
+
+            submitBtn.addEventListener('click', () => {
+                const res = calculateResult();
+                if (res) {
+                    resultType.textContent = res.title;
+                    resultDesc.textContent = res.desc;
+                    resultBox.style.display = 'block';
+                    resultBox.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                for (let i = 0; i < questions.length; i++) {
+                    document.getElementsByName(`q${i}`).forEach(r => r.checked = false);
+                }
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                resultBox.style.display = 'none';
+            });
+        })();
+    </script>
 </body>
 </html>

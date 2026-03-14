@@ -20,6 +20,25 @@ window.VALID_CODES = [
     'A1X2-C3V4-B5N6',
     'A9G8-F7D6-S5A4',
     'A6Y5-R4E3-W2Q1',
+     'A7B9-2K4M-PQ8R',
+    'A3Z9-L1P5-T6WQ',
+    'A4HJ-6K8L-2N3P',
+    'A5ST-9U7V-1W2X',
+    'A8N2-B4V5-C6X7',
+    'A1L9-P3O4-I5U6',
+    'A2W3-E4R5-T6Y7',
+    'A9I0-O8P7-Z6X5',
+    'A5G6-H7J8-K9L0',
+    'A4B5-N6M7-Q8W9',
+    'A2K3-L4Z5-X6C7',
+    'A7U8-I9O0-P1Q2',
+    'A3E4-R5F6-G7H8',
+    'A2A3-Q4W5-E6R7',
+    'A8V9-B0N1-M2K3',
+    'A4P5-O6I7-U8Y9',
+    'A1X2-C3V4-B5N6',
+    'A9G8-F7D6-S5A4',
+    'A6Y5-R4E3-W2Q1',
     'A3M4-K5J6-H7G8',
     'A5R2-T9Y3-U4I7',
     'A7L6-P8O2-W1Q4',
@@ -101,6 +120,7 @@ window.VALID_CODES = [
     'A6Q1-W3E5-R7T9',
     'A8Y4-U6I8-O1P3',
     'A1Z7-X9C2-V4B6'
+    'A3M4-K5J6-H7G8'
 ];
 
 // 已使用兑换码（从 localStorage 读取）

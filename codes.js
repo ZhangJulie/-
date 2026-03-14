@@ -1,5 +1,5 @@
 // codes.js
-// 所有有效兑换码集中在此数组，可随时增加（不要删除已售出的码）
+// 所有有效兑换码（初始）
 window.VALID_CODES = [
     'A7B9-2K4M-PQ8R',
     'A3Z9-L1P5-T6WQ',
@@ -22,3 +22,34 @@ window.VALID_CODES = [
     'A6Y5-R4E3-W2Q1',
     'A3M4-K5J6-H7G8'
 ];
+
+// 已使用兑换码（从 localStorage 读取，若没有则初始化为空数组）
+window.USED_CODES = JSON.parse(localStorage.getItem('USED_CODES') || '[]');
+
+// 工具函数：检查并使用兑换码
+function useCode(code) {
+    // 1. 格式校验（简单检查是否符合 XXXX-XXXX-XXXX）
+    if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+        return { success: false, message: '无效的兑换码格式' };
+    }
+
+    // 2. 是否已被使用
+    if (window.USED_CODES.includes(code)) {
+        return { success: false, message: '该兑换码已使用过' };
+    }
+
+    // 3. 是否在有效列表中
+    if (!window.VALID_CODES.includes(code)) {
+        return { success: false, message: '兑换码不存在' };
+    }
+
+    // 4. 标记为已使用并保存
+    window.USED_CODES.push(code);
+    localStorage.setItem('USED_CODES', JSON.stringify(window.USED_CODES));
+
+    // 这里可以触发您的实际奖励逻辑
+    return { success: true, message: '兑换成功！' };
+}
+
+// 可选：导出到全局
+window.useCode = useCode;

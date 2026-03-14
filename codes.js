@@ -23,33 +23,39 @@ window.VALID_CODES = [
     'A3M4-K5J6-H7G8'
 ];
 
-// 已使用兑换码（从 localStorage 读取，若没有则初始化为空数组）
-window.USED_CODES = JSON.parse(localStorage.getItem('USED_CODES') || '[]');
+// 已使用兑换码（从 localStorage 读取）
+window.USED_CODES = (function() {
+    try {
+        return JSON.parse(localStorage.getItem('USED_CODES') || '[]');
+    } catch (e) {
+        return [];
+    }
+})();
 
-// 工具函数：检查并使用兑换码
-function useCode(code) {
-    // 1. 格式校验（简单检查是否符合 XXXX-XXXX-XXXX）
+// 验证兑换码（格式、是否存在、是否已使用）
+function validateCode(code) {
     if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
-        return { success: false, message: '无效的兑换码格式' };
+        return { valid: false, message: '无效的兑换码格式' };
     }
-
-    // 2. 是否已被使用
-    if (window.USED_CODES.includes(code)) {
-        return { success: false, message: '该兑换码已使用过' };
-    }
-
-    // 3. 是否在有效列表中
     if (!window.VALID_CODES.includes(code)) {
-        return { success: false, message: '兑换码不存在' };
+        return { valid: false, message: '兑换码不存在' };
     }
-
-    // 4. 标记为已使用并保存
-    window.USED_CODES.push(code);
-    localStorage.setItem('USED_CODES', JSON.stringify(window.USED_CODES));
-
-    // 这里可以触发您的实际奖励逻辑
-    return { success: true, message: '兑换成功！' };
+    if (window.USED_CODES.includes(code)) {
+        return { valid: false, message: '该兑换码已使用过' };
+    }
+    return { valid: true, message: '验证通过' };
 }
 
-// 可选：导出到全局
-window.useCode = useCode;
+// 标记兑换码为已使用
+function markCodeAsUsed(code) {
+    if (!window.USED_CODES.includes(code)) {
+        window.USED_CODES.push(code);
+        localStorage.setItem('USED_CODES', JSON.stringify(window.USED_CODES));
+        return true;
+    }
+    return false;
+}
+
+// 导出到全局
+window.validateCode = validateCode;
+window.markCodeAsUsed = markCodeAsUsed;

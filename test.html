@@ -66,7 +66,7 @@
             padding: 24px 20px;
             box-shadow: 0 15px 30px rgba(0,30,60,0.1);
         }
-        /* 右侧面板改为静态信息，不再显示实时得分 */
+        /* 右侧面板：静态说明，无实时得分 */
         .right-panel {
             flex: 1;
             min-width: 240px;
@@ -216,32 +216,6 @@
         .btn:hover {
             background: #143048;
         }
-        .score-board {
-            background: #edf4fc;
-            border-radius: 28px;
-            padding: 16px 14px;
-            margin: 15px 0;
-            font-size: 14px;
-        }
-        .dimension-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #b1c7e0;
-        }
-        .dimension-name {
-            font-weight: 600;
-        }
-        .dimension-score {
-            font-weight: 700;
-            color: #113458;
-        }
-        .highlight {
-            background: #fedfa3;
-            padding: 3px 12px;
-            border-radius: 40px;
-            font-weight: 700;
-        }
         .verdict {
             background: #e1eefb;
             border-radius: 28px;
@@ -267,12 +241,6 @@
             .nav-btn { font-size: 15px; padding: 12px 14px; }
             .btn { font-size: 15px; }
         }
-        .result-card {
-            background: #f7faff;
-            border-radius: 30px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
         .badge {
             background: #1e3b5a;
             color: white;
@@ -282,6 +250,12 @@
             display: inline-block;
             margin-bottom: 12px;
             font-size: 14px;
+        }
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -313,22 +287,19 @@
                 <div id="navHint" style="font-size:13px; margin-top:10px; color:#3b5f8a;"></div>
             </div>
 
-            <!-- 结果区（初始隐藏） -->
+            <!-- 结果区（无分数表格，仅保留文字结论） -->
             <div id="resultArea">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <div class="result-header">
                     <span class="badge">测评报告</span>
                     <span style="font-size: 14px; color: #2b4b6e;">详细分析</span>
                 </div>
-                <!-- 得分概览 -->
-                <div class="score-board" id="resultScoreBoard"></div>
-                <!-- 详细结论 -->
+                <!-- 详细结论，不再显示维度分数 -->
                 <div class="verdict" id="resultVerdict"></div>
-                <!-- 没有重新测评按钮 -->
                 <p class="footnote" style="text-align:center;">测评完成，感谢使用</p>
             </div>
         </div>
 
-        <!-- 右侧面板：静态说明（不再显示实时得分） -->
+        <!-- 右侧面板：静态说明（无实时得分） -->
         <div class="right-panel">
             <h2>🔍 关于测评</h2>
             <div class="info-box">
@@ -408,12 +379,11 @@
         const currentQDisplay = document.getElementById('currentQDisplay');
         const progressFill = document.getElementById('progressFill');
         const navHint = document.getElementById('navHint');
-        const resultScoreBoard = document.getElementById('resultScoreBoard');
         const resultVerdict = document.getElementById('resultVerdict');
 
-        // 如果已完成，直接显示结果区（初始状态下未完成）
+        // 更新进度和按钮状态
         function updateProgressAndButtons() {
-            if (completed) return; // 已锁定，不更新
+            if (completed) return;
 
             currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
             const answeredCount = answers.filter(a => a !== null).length;
@@ -437,6 +407,7 @@
             }
         }
 
+        // 渲染当前题目
         function renderQuestion() {
             if (completed) return;
             const q = questions[currentIndex];
@@ -455,18 +426,16 @@
 
             document.querySelectorAll('input[name="qOption"]').forEach(radio => {
                 radio.addEventListener('change', function(e) {
-                    if (completed) return; // 锁定后不可选
+                    if (completed) return;
                     const val = parseInt(e.target.value);
                     answers[currentIndex] = val;
                     document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
                     e.target.closest('.option').classList.add('selected');
 
                     if (currentIndex < 19) {
-                        // 非最后一题自动跳转
-                        goToNext();
+                        goToNext(); // 自动下一题
                     } else {
-                        // 最后一题，更新按钮状态
-                        updateProgressAndButtons();
+                        updateProgressAndButtons(); // 最后一题更新按钮状态
                     }
                 });
             });
@@ -491,15 +460,15 @@
                 currentIndex++;
                 renderQuestion();
             } else if (currentIndex === 19 && answers[19] !== null) {
-                // 确认答案
-                showResult();
+                showResult(); // 确认答案
             }
         }
 
+        // 显示结果（无分数表格）
         function showResult() {
-            // 锁定，不再可答题
             completed = true;
-            // 计算得分
+
+            // 计算得分（仅用于内部判定，不显示）
             const dimScores = { m:0, n:0, p:0, s:0 };
             let total = 0;
             let cCount = 0;
@@ -511,13 +480,12 @@
                 if (val === 3) cCount++;
             }
 
-            const mScore = dimScores['m'], nScore = dimScores['n'], pScore = dimScores['p'], sScore = dimScores['s'];
-
+            // 显著维度
             const significant = [];
-            if (mScore >= 12) significant.push('马基雅维利主义');
-            if (nScore >= 12) significant.push('自恋');
-            if (pScore >= 12) significant.push('心理变态');
-            if (sScore >= 12) significant.push('日常施虐');
+            if (dimScores['m'] >= 12) significant.push('马基雅维利主义');
+            if (dimScores['n'] >= 12) significant.push('自恋');
+            if (dimScores['p'] >= 12) significant.push('心理变态');
+            if (dimScores['s'] >= 12) significant.push('日常施虐');
 
             let typeText = '';
             if (significant.length === 0) typeText = '无明显主导类型';
@@ -532,15 +500,7 @@
 
             const desc = getDescription(typeText, severityLevel);
 
-            resultScoreBoard.innerHTML = `
-                <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${pScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">日常施虐</span><span class="dimension-score">${sScore} / 15</span></div>
-                <div class="dimension-row" style="border-bottom:none; margin-top:6px;"><span>总分</span><span class="highlight">${total} / 60</span></div>
-                <div class="dimension-row" style="border-bottom:none;"><span>C选项数</span><span class="highlight">${cCount}</span></div>
-            `;
-
+            // 构建纯文字结论（不带分数表格）
             resultVerdict.innerHTML = `
                 <h3 style="margin-bottom:8px;">📌 判定结果</h3>
                 <p><strong>主导类型：</strong>${typeText}</p>
@@ -564,6 +524,7 @@
             resultArea.style.display = 'block';
         }
 
+        // 描述库
         function getDescription(type, severity) {
             let mainDesc = '', adviceWithHarm = '', adviceWithoutHarm = '';
             if (type.includes('马基雅维利主义主导')) {

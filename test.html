@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>黑暗人格倾向观察测试 · 他人版</title>
+    <title>TA是隐藏的黑暗人格吗？</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,278 +11,312 @@
             padding: 0;
         }
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f4f7fc;
-            color: #1e2b3a;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f0f5fa;
+            color: #1a2b3c;
             padding: 20px;
             line-height: 1.5;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #0f2c3f;
-        }
-        .subhead {
-            font-size: 1rem;
-            color: #2c4a6e;
-            background: #e9eef3;
-            padding: 12px 16px;
-            border-radius: 20px;
-            margin: 8px 0 4px;
-        }
-        .test-grid {
             display: flex;
             flex-direction: row;
             gap: 24px;
             flex-wrap: wrap;
         }
-        .questions-panel {
+        .left-panel {
             flex: 2;
             min-width: 320px;
             background: white;
-            border-radius: 28px;
-            padding: 20px 22px;
-            box-shadow: 0 12px 30px rgba(0,20,40,0.08);
+            border-radius: 36px;
+            padding: 28px 30px;
+            box-shadow: 0 20px 35px -8px rgba(0,30,60,0.15);
         }
-        .result-panel {
+        .right-panel {
             flex: 1;
             min-width: 280px;
-            background: #ffffffdd;
-            backdrop-filter: blur(4px);
             background: white;
-            border-radius: 28px;
-            padding: 22px 20px;
-            box-shadow: 0 12px 30px rgba(0,20,40,0.08);
+            border-radius: 36px;
+            padding: 28px 24px;
+            box-shadow: 0 20px 35px -8px rgba(0,30,60,0.15);
             height: fit-content;
             position: sticky;
             top: 20px;
         }
-        .question-item {
-            margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e2eaf1;
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(145deg, #1f3a5f, #102a40);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
-        .question-item:last-child {
-            border-bottom: none;
+        .desc {
+            background: #e7eef8;
+            padding: 16px 22px;
+            border-radius: 40px;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+            color: #1e3b5a;
+            border: 1px solid #cbd7e6;
         }
-        .q-title {
-            font-weight: 600;
-            font-size: 1.1rem;
+        .progress {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 28px;
+            font-weight: 500;
+            color: #2b4b6e;
         }
-        .q-num {
+        .progress-bar-bg {
+            height: 10px;
+            background: #d9e2ef;
+            border-radius: 20px;
+            flex: 1;
+            margin: 0 15px;
+        }
+        .progress-fill {
+            height: 10px;
+            background: #2b4f7b;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.2s;
+        }
+        .question-num {
+            font-size: 1rem;
             background: #1e3b5a;
             color: white;
+            padding: 5px 18px;
             border-radius: 40px;
-            width: 30px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 500;
         }
-        .dimension-tag {
-            font-size: 0.7rem;
-            background: #dce5f0;
-            color: #1f3a57;
-            padding: 4px 10px;
-            border-radius: 40px;
-            letter-spacing: 0.3px;
-            font-weight: 500;
-            text-transform: uppercase;
+        .question-box {
+            margin: 30px 0 40px;
+        }
+        .q-text {
+            font-size: 1.7rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 40px;
+            color: #0b253a;
         }
         .options {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-left: 6px;
+            gap: 18px;
+            margin-top: 20px;
         }
         .option {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            background: #f8faff;
-            padding: 10px 16px;
-            border-radius: 40px;
-            border: 1px solid transparent;
-            transition: all 0.1s;
+            gap: 18px;
+            background: #f7faff;
+            padding: 18px 24px;
+            border-radius: 50px;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 1.1rem;
         }
         .option:hover {
-            background: #edf3fc;
-            border-color: #b7c9e0;
+            background: #ecf3fe;
+            border-color: #a1bbd9;
+        }
+        .option.selected {
+            background: #e1ebfa;
+            border-color: #2b4f7b;
+            box-shadow: 0 6px 12px rgba(30,70,120,0.1);
         }
         input[type="radio"] {
             margin-top: 3px;
-            accent-color: #2b4f7b;
-            transform: scale(1.1);
+            accent-color: #1f3a5f;
+            transform: scale(1.3);
+            flex-shrink: 0;
         }
-        .option-text {
-            font-size: 0.95rem;
-            line-height: 1.4;
-            color: #1d2f41;
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-top: 40px;
         }
-        .badge {
-            font-size: 0.75rem;
-            background: #cfddee;
-            border-radius: 30px;
-            padding: 2px 10px;
-            margin-left: 8px;
-            white-space: nowrap;
+        .nav-btn {
+            background: white;
+            border: 2px solid #c1d3e8;
+            padding: 16px 28px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1d3957;
+            cursor: pointer;
+            transition: all 0.15s;
+            flex: 1;
+            text-align: center;
+        }
+        .nav-btn.primary {
+            background: #1e3b5a;
+            border-color: #1e3b5a;
+            color: white;
+        }
+        .nav-btn.primary:hover {
+            background: #143048;
+        }
+        .nav-btn:hover {
+            background: #e2ecf9;
+        }
+        .nav-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
         }
         .btn {
             background: #1e3b5a;
             color: white;
             border: none;
-            padding: 16px 28px;
+            padding: 16px 20px;
             border-radius: 60px;
             font-size: 1.2rem;
             font-weight: 600;
             width: 100%;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 8px 18px rgba(0,35,70,0.15);
-            margin: 20px 0 10px;
+            transition: background 0.2s;
+            box-shadow: 0 10px 20px rgba(0,35,70,0.2);
+            margin: 20px 0 16px;
         }
         .btn:hover {
             background: #143048;
         }
-        .btn:active {
-            transform: scale(0.98);
-        }
         .score-board {
-            background: #f0f5fb;
-            border-radius: 30px;
-            padding: 20px 16px;
+            background: #edf4fc;
+            border-radius: 32px;
+            padding: 20px 18px;
             margin: 20px 0;
         }
         .dimension-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #bccfe0;
+            padding: 10px 0;
+            border-bottom: 1px dashed #b1c7e0;
         }
         .dimension-name {
-            font-weight: 500;
+            font-weight: 600;
         }
         .dimension-score {
             font-weight: 700;
-            color: #113250;
+            color: #113458;
         }
         .highlight {
-            background: #ffeecb;
-            padding: 2px 12px;
+            background: #fedfa3;
+            padding: 4px 16px;
             border-radius: 40px;
-            font-weight: 600;
+            font-weight: 700;
         }
         .verdict {
             background: #e1eefb;
-            border-radius: 30px;
-            padding: 18px;
-            margin-top: 24px;
-            border-left: 6px solid #2b4f7b;
-        }
-        .verdict h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        .warning {
-            color: #b13e3e;
-            font-weight: 600;
-        }
-        .footnote {
-            font-size: 0.85rem;
-            color: #4d6278;
-            margin-top: 16px;
-            border-top: 1px solid #d1deed;
-            padding-top: 12px;
-        }
-        .flex-row {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
+            border-radius: 32px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 6px solid #1e3b5a;
         }
         .radio-group {
             display: flex;
-            gap: 30px;
+            gap: 25px;
             background: #edf2f8;
-            padding: 10px 20px;
-            border-radius: 50px;
+            padding: 14px 22px;
+            border-radius: 60px;
+            margin-top: 12px;
         }
         .radio-group label {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 500;
         }
-        .footer {
-            text-align: center;
-            color: #5a6f88;
-            margin-top: 16px;
+        .footnote {
+            font-size: 0.85rem;
+            color: #4f6883;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #d4e2f2;
+        }
+        .warning-tip {
+            background: #fef2db;
+            border-radius: 28px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            margin: 15px 0;
         }
         @media (max-width: 800px) {
-            .result-panel {
+            .right-panel {
                 position: relative;
                 top: 0;
             }
+            .q-text { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🧠 黑暗人格倾向观察测试 · 他人版</h1>
-    <div class="subhead">根据你对被观察者的日常了解，为每个场景选择最符合的描述。完成后点击“分析结果”。</div>
-
-    <div class="test-grid">
-        <!-- 左侧：所有题目 -->
-        <div class="questions-panel" id="questionsPanel"></div>
-
-        <!-- 右侧：结果面板 + 控制 -->
-        <div class="result-panel">
-            <h2 style="font-weight:600; margin-bottom:16px;">📊 分析结果</h2>
-            <button class="btn" id="calculateBtn">分析结果</button>
-
-            <div id="scoreDisplay" style="min-height:200px;">
-                <!-- 动态填充得分和结论 -->
-                <div class="score-board" id="scoreBoard"></div>
-                <div class="verdict" id="verdictBox"></div>
-            </div>
-
-            <!-- 第三步：是否造成伤害（主观判断） -->
-            <div style="margin-top: 30px; background: #f4f0e6; border-radius: 30px; padding: 15px;">
-                <p style="font-weight:600; margin-bottom:12px;">⚖️ 第三步 · 最终确认</p>
-                <p style="font-size:0.95rem; margin-bottom:12px;">他/她的这些行为，有没有对你或别人造成实际的痛苦、被利用、被伤害？</p>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="harm" value="yes" id="harmYes"> 是，有伤害
-                    </label>
-                    <label>
-                        <input type="radio" name="harm" value="no" id="harmNo" checked> 否，无实质伤害
-                    </label>
-                </div>
-                <p class="footnote" style="margin-top:15px;">*结合主观感受，结论会更准确</p>
-            </div>
-            <p class="footnote">本测试非专业诊断，用于人际觉察与自我反思。</p>
+    <!-- 左侧：分页题目 -->
+    <div class="left-panel">
+        <h1>TA是隐藏的黑暗人格吗？</h1>
+        <div class="desc">
+            ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成，确认后请点击右侧“分析结果”。
         </div>
+
+        <!-- 进度条区域 -->
+        <div class="progress">
+            <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
+            </div>
+        </div>
+
+        <!-- 当前题目渲染区 -->
+        <div id="questionContainer" class="question-box">
+            <!-- 动态注入题目 -->
+        </div>
+
+        <!-- 导航按钮 -->
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" disabled>← 上一题</button>
+            <button class="nav-btn primary" id="nextBtn">下一题 →</button>
+        </div>
+        <div class="warning-tip" id="navHint"></div>
     </div>
-    <div class="footer">—— 基于黑暗四角星模型 · 观察版本 ——</div>
+
+    <!-- 右侧：结果面板 + 控制 -->
+    <div class="right-panel">
+        <h2 style="font-weight:600; margin-bottom:16px;">📋 测评结论</h2>
+        <button class="btn" id="calculateBtn">🔍 分析结果</button>
+
+        <div id="scoreDisplay">
+            <div class="score-board" id="scoreBoard">
+                <div style="text-align:center; padding:20px; color:#4e6d8c;">完成所有题目后点击分析</div>
+            </div>
+            <div class="verdict" id="verdictBox"></div>
+        </div>
+
+        <!-- 第三步：是否造成伤害（主观判断） -->
+        <div style="margin-top: 30px; background: #f0ede5; border-radius: 30px; padding: 18px;">
+            <p style="font-weight:600; margin-bottom:12px;">⚖️ 第三步 · 最终确认</p>
+            <p style="font-size:0.95rem; margin-bottom:12px;">他/她的这些行为，有没有对你或别人造成实际的痛苦、被利用、被伤害？</p>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="harm" value="yes" id="harmYes"> 是，有伤害
+                </label>
+                <label>
+                    <input type="radio" name="harm" value="no" id="harmNo" checked> 否，无实质伤害
+                </label>
+            </div>
+            <p class="footnote" style="margin-top:15px;">*结合主观感受，结论更准确</p>
+        </div>
+        <p class="footnote">本测试基于黑暗四角星模型，用于人际觉察，非专业诊断。</p>
+    </div>
 </div>
 
 <script>
     (function() {
-        // ----- 题目数据 (维度英文代码: m=马基雅维利主义, n=自恋, p=心理变态, s=日常施虐) -----
+        // ----- 题目数据 (保留维度用于计分，但不在UI显示) -----
         const questions = [
             { id: 1, text: "在餐厅、商店等场合，他对服务员/店员的态度通常是？", dim: "m",
               options: ["礼貌客气，常说谢谢", "基本正常，偶尔不耐烦", "颐指气使，稍不满意就训斥"] },
@@ -327,67 +361,133 @@
         ];
 
         // 维度中文名映射
-        const dimNames = {
-            'm': '马基雅维利主义',
-            'n': '自恋',
-            'p': '心理变态',
-            's': '日常施虐'
-        };
+        const dimNames = { 'm': '马基雅维利主义', 'n': '自恋', 'p': '心理变态', 's': '日常施虐' };
 
-        // 渲染题目
-        const panel = document.getElementById('questionsPanel');
-        let html = '';
-        questions.forEach((q, idx) => {
-            html += `<div class="question-item">`;
-            html += `<div class="q-title"><span class="q-num">${q.id}</span> ${q.text} <span class="dimension-tag">${dimNames[q.dim]}</span></div>`;
+        // 当前题索引 (0-19)
+        let currentIndex = 0;
+        // 存储答案 (长度为20，值为1,2,3 或 null)
+        let answers = new Array(20).fill(null);
+
+        // DOM 元素
+        const questionContainer = document.getElementById('questionContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentQDisplay = document.getElementById('currentQDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const navHint = document.getElementById('navHint');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const scoreBoard = document.getElementById('scoreBoard');
+        const verdictBox = document.getElementById('verdictBox');
+
+        // 渲染当前题目
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            let html = `<div class="q-text">${currentIndex+1}. ${q.text}</div>`;
             html += `<div class="options">`;
-            // 选项 A (值1), B (值2), C (值3)
-            ['A', 'B', 'C'].forEach((letter, optIdx) => {
-                const val = optIdx + 1; // 1,2,3
-                html += `<label class="option">`;
-                html += `<input type="radio" name="q${q.id}" value="${val}" data-dim="${q.dim}" data-val="${val}">`;
-                html += `<span class="option-text"><strong>${letter}.</strong> ${q.options[optIdx]}</span>`;
+            q.options.forEach((optText, idx) => {
+                const val = idx + 1; // 1,2,3
+                const checked = answers[currentIndex] === val ? 'checked' : '';
+                html += `<label class="option ${checked ? 'selected' : ''}">`;
+                html += `<input type="radio" name="qOption" value="${val}" ${checked} data-val="${val}">`;
+                html += `<span>${optText}</span>`;
                 html += `</label>`;
             });
-            html += `</div></div>`;
-        });
-        panel.innerHTML = html;
+            html += `</div>`;
+            questionContainer.innerHTML = html;
 
-        // 计算按钮逻辑
-        document.getElementById('calculateBtn').addEventListener('click', function() {
-            // 收集所有radio组
-            const dimScores = { m:0, n:0, p:0, s:0 };
-            let total = 0;
-            let cCount = 0;
-            let allAnswered = true;
+            // 为当前页的radio添加事件监听 (保存答案)
+            document.querySelectorAll('input[name="qOption"]').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    const val = parseInt(e.target.value);
+                    answers[currentIndex] = val;
+                    // 高亮选中的选项
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    e.target.closest('.option').classList.add('selected');
+                    // 更新进度条和提示
+                    updateProgressAndButtons();
+                });
+            });
 
-            for (let i = 1; i <= 20; i++) {
-                const radios = document.getElementsByName(`q${i}`);
-                let selectedVal = null;
-                let selectedDim = null;
-                for (let r of radios) {
-                    if (r.checked) {
-                        selectedVal = parseInt(r.value);
-                        selectedDim = r.dataset.dim;
-                        break;
+            updateProgressAndButtons();
+        }
+
+        // 更新进度显示、按钮状态、提示
+        function updateProgressAndButtons() {
+            // 更新进度文本
+            currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
+            // 更新进度条 (已答题数/20)
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percent = (answeredCount / 20) * 100;
+            progressFill.style.width = percent + '%';
+
+            // 上一页按钮状态
+            prevBtn.disabled = currentIndex === 0;
+
+            // 下一页按钮文字 & 禁用逻辑 (最后一页)
+            if (currentIndex === 19) {
+                nextBtn.innerText = '最后一题';
+                nextBtn.disabled = true;
+                navHint.innerText = '✅ 已完成所有题目，点击右侧“分析结果”查看结论。';
+            } else {
+                nextBtn.innerText = '下一题 →';
+                nextBtn.disabled = false;
+                navHint.innerText = '';
+            }
+        }
+
+        // 切换题目
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function goToNext() {
+            if (currentIndex < 19) {
+                // 如果当前题未答，可以允许跳转，但最好提醒一下？允许自由跳转，不强求，但为了友好，加个提醒
+                if (answers[currentIndex] === null) {
+                    if (!confirm('当前题目尚未选择，确定跳过吗？')) {
+                        return;
                     }
                 }
-                if (selectedVal === null) {
-                    allAnswered = false;
-                    break;
-                }
-                // 累加
-                dimScores[selectedDim] += selectedVal;
-                total += selectedVal;
-                if (selectedVal === 3) cCount++;
+                currentIndex++;
+                renderQuestion();
             }
+        }
 
-            if (!allAnswered) {
-                alert('请先完成所有20道题目（每个场景都需要选择一个选项）');
+        // 事件绑定
+        prevBtn.addEventListener('click', goToPrev);
+        nextBtn.addEventListener('click', goToNext);
+
+        // 分析结果按钮
+        calculateBtn.addEventListener('click', function() {
+            // 检查所有题目是否已回答
+            const missingIndices = [];
+            answers.forEach((ans, idx) => {
+                if (ans === null) missingIndices.push(idx+1);
+            });
+            if (missingIndices.length > 0) {
+                alert(`还有 ${missingIndices.length} 题未完成：第 ${missingIndices.join(', ')} 题。请返回作答。`);
+                // 可自动跳转到第一个未答题
+                currentIndex = missingIndices[0] - 1;
+                renderQuestion();
                 return;
             }
 
-            // 计算各维度得分
+            // 计算维度得分
+            const dimScores = { m:0, n:0, p:0, s:0 };
+            let total = 0;
+            let cCount = 0;
+
+            for (let i = 0; i < 20; i++) {
+                const dim = questions[i].dim;
+                const val = answers[i];
+                dimScores[dim] += val;
+                total += val;
+                if (val === 3) cCount++;
+            }
+
             const mScore = dimScores['m'];
             const nScore = dimScores['n'];
             const pScore = dimScores['p'];
@@ -400,37 +500,34 @@
             if (pScore >= 12) significant.push('心理变态');
             if (sScore >= 12) significant.push('日常施虐');
 
-            // 主导类型文字
             let typeText = '';
             if (significant.length === 0) typeText = '无明显主导类型';
             else if (significant.length === 1) typeText = significant[0] + '主导';
             else typeText = '混合型黑暗人格：' + significant.join(' + ');
 
             // 严重程度
-            let severityText = '';
             let severityLevel = '';
             if (total <= 35 && cCount <= 3) severityLevel = '正常范围';
             else if ( (total >= 36 && total <=45) || (cCount >=4 && cCount <=8) ) severityLevel = '有黑暗特质';
             else if ( total >= 46 || cCount >=9 ) severityLevel = '高度疑似黑暗人格';
-            else severityLevel = '有黑暗特质'; // 保底
+            else severityLevel = '有黑暗特质';
 
-            // 第三步：获取伤害选项
+            // 伤害判断
             const harmYes = document.getElementById('harmYes').checked;
             const harmNo = document.getElementById('harmNo').checked;
 
-            // 最终结论
             let finalVerdict = '';
             if (harmNo) {
                 if (severityLevel === '正常范围') finalVerdict = '✅ 正常范围，无明显黑暗人格特征。';
                 else if (severityLevel === '有黑暗特质') finalVerdict = `⚠️ 他具有${significant.length>0?typeText:'某些黑暗特质'}，但未造成实质伤害。可以相处，但建议留心。`;
                 else if (severityLevel === '高度疑似黑暗人格') finalVerdict = `🔍 高度疑似黑暗人格 (${typeText})，但目前未观察到实质伤害。建议观察边界。`;
-            } else { // harmYes
+            } else {
                 if (severityLevel === '正常范围') finalVerdict = `⚠️ 虽然得分在正常范围，但你感受到伤害，这很重要。请相信直觉，重新评估关系。`;
                 else if (severityLevel === '有黑暗特质') finalVerdict = `❗ 典型黑暗人格 (${typeText})，且已造成伤害。建议保持距离，认真评估关系。`;
                 else if (severityLevel === '高度疑似黑暗人格') finalVerdict = `🚨 高度疑似黑暗人格 (${typeText})，且已造成实际伤害。强烈建议设立边界，考虑远离。`;
             }
 
-            // 更新得分板
+            // 更新右侧面板
             document.getElementById('scoreBoard').innerHTML = `
                 <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore} / 15</span></div>
                 <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore} / 15</span></div>
@@ -440,20 +537,17 @@
                 <div class="dimension-row" style="border-bottom:none;"><span>C选项数 (3分项)</span><span class="highlight">${cCount}</span></div>
             `;
 
-            document.getElementById('verdictBox').innerHTML = `
-                <h3>📌 判定结果</h3>
+            verdictBox.innerHTML = `
+                <h3 style="margin-bottom:8px;">📌 判定结果</h3>
                 <p><strong>主导类型：</strong>${typeText}</p>
                 <p><strong>严重程度：</strong>${severityLevel}</p>
                 <p><strong>伤害确认：</strong>${harmYes ? '✅ 有实际伤害' : '❌ 无实质伤害'}</p>
-                <p style="margin-top:14px; background:white; padding:14px; border-radius:30px;"><span style="font-weight:600;">最终结论：</span><br>${finalVerdict}</p>
+                <p style="margin-top:14px; background:white; padding:16px; border-radius:28px;"><span style="font-weight:600;">最终结论：</span><br>${finalVerdict}</p>
             `;
         });
 
-        // 初始加载时显示占位
-        document.getElementById('scoreBoard').innerHTML = `
-            <div style="text-align:center; padding:20px; color:#4e6d8c;">完成题目后点击分析</div>
-        `;
-        document.getElementById('verdictBox').innerHTML = '';
+        // 初始化第一题
+        renderQuestion();
     })();
 </script>
 </body>

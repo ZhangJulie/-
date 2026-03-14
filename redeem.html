@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>性格测试</title>
-    <!-- 引入外部兑换码列表（含已使用记录管理） -->
+    <title>性格测试兑换 · 多测试版</title>
     <script src="codes.js"></script>
     <style>
-        /* 样式与之前相同，可保留 */
+        /* 样式与之前相同，此处省略以节省空间，请保留原有样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(145deg, #f4f7fb, #e9eef4);
@@ -110,106 +109,65 @@
             </button>
         </div>
         <div class="reserved-hint">
-            ⚙️ 每个兑换码仅能使用一次（基于浏览器记录）
+            ⚙️ 完成测试后兑换码自动失效，中途退出可重新进入
         </div>
     </div>
 
     <script>
         (function() {
-            // ========== 配置区 ==========
-            // 测试页面映射：根据兑换码第一个字符（A/B/C/D）跳转到不同页面
             const TEST_PAGE_MAP = {
-                'A': 'https://zhangjulie.github.io/-/test.html',   // 当前性格测试
-                'B': 'https://zhangjulie.github.io/-/test-b.html', // 预留
-                'C': 'https://zhangjulie.github.io/-/test-c.html', // 预留
-                'D': 'https://zhangjulie.github.io/-/test-d.html'  // 预留
+                'A': 'https://zhangjulie.github.io/-/test.html',
+                'B': 'https://zhangjulie.github.io/-/test-b.html',
+                'C': 'https://zhangjulie.github.io/-/test-c.html',
+                'D': 'https://zhangjulie.github.io/-/test-d.html'
             };
 
-            // ========== 兑换码管理（集成您提供的代码） ==========
-            // 从 codes.js 中获取有效列表（需确保 codes.js 已定义 window.VALID_CODES）
-            const VALID_CODES = window.VALID_CODES || [];
-
-            // 已使用兑换码：从 localStorage 读取，若没有则初始化为空数组
-            let USED_CODES = [];
-            try {
-                USED_CODES = JSON.parse(localStorage.getItem('USED_CODES') || '[]');
-            } catch (e) {
-                USED_CODES = [];
-            }
-
-            // 工具函数：检查并使用兑换码
-            function useCode(code) {
-                // 1. 格式校验（简单检查是否符合 XXXX-XXXX-XXXX，可根据实际调整）
-                if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
-                    return { success: false, message: '无效的兑换码格式' };
-                }
-
-                // 2. 是否已被使用
-                if (USED_CODES.includes(code)) {
-                    return { success: false, message: '该兑换码已使用过' };
-                }
-
-                // 3. 是否在有效列表中
-                if (!VALID_CODES.includes(code)) {
-                    return { success: false, message: '兑换码不存在' };
-                }
-
-                // 4. 标记为已使用并保存
-                USED_CODES.push(code);
-                localStorage.setItem('USED_CODES', JSON.stringify(USED_CODES));
-
-                return { success: true, message: '兑换成功！' };
-            }
-
-            // ========== 跳转逻辑 ==========
             function getTargetUrlByCode(code) {
-                if (!code || code.length === 0) return null;
-                const firstChar = code.charAt(0).toUpperCase(); // 提取首位并大写
+                if (!code) return null;
+                const firstChar = code.charAt(0).toUpperCase();
                 const baseUrl = TEST_PAGE_MAP[firstChar];
                 if (!baseUrl) {
-                    alert(`未配置该类型测试（${firstChar}），请联系管理员`);
+                    alert(`未配置该类型测试（${firstChar}）`);
                     return null;
                 }
-                // 将完整兑换码作为参数附加
                 try {
-                    if (baseUrl.startsWith('http://') || baseUrl.startsWith('https://')) {
-                        const url = new URL(baseUrl);
-                        url.searchParams.set('code', encodeURIComponent(code));
-                        return url.toString();
-                    }
-                } catch (e) {}
-                // 降级拼接
-                const separator = baseUrl.includes('?') ? '&' : '?';
-                return `${baseUrl}${separator}code=${encodeURIComponent(code)}`;
+                    const url = new URL(baseUrl);
+                    url.searchParams.set('code', encodeURIComponent(code));
+                    return url.toString();
+                } catch (e) {
+                    const separator = baseUrl.includes('?') ? '&' : '?';
+                    return `${baseUrl}${separator}code=${encodeURIComponent(code)}`;
+                }
             }
 
-            // ========== 处理兑换 ==========
             const codeInput = document.getElementById('redeemCode');
             const enterBtn = document.getElementById('enterBtn');
 
             function handleRedeem() {
                 const rawCode = codeInput.value.trim();
-                if (rawCode === '') {
+                if (!rawCode) {
                     alert('请输入兑换码');
                     codeInput.focus();
                     return;
                 }
 
-                // 调用 useCode 进行验证和标记
-                const result = useCode(rawCode);
-                if (!result.success) {
-                    alert(result.message);
-                    codeInput.value = ''; // 清空输入框，方便重新输入
+                // 仅验证，不标记已使用
+                if (typeof window.validateCode !== 'function') {
+                    alert('系统初始化失败，请刷新');
+                    return;
+                }
+                const validation = window.validateCode(rawCode);
+                if (!validation.valid) {
+                    alert(validation.message);
+                    codeInput.value = '';
                     codeInput.focus();
                     return;
                 }
 
-                // 验证通过，根据首位字母获取目标URL
                 const targetUrl = getTargetUrlByCode(rawCode);
-                if (!targetUrl) return; // 已弹窗提示
-
-                // 跳转
-                window.location.href = targetUrl;
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
             }
 
             enterBtn.addEventListener('click', handleRedeem);

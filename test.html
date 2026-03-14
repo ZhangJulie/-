@@ -216,20 +216,10 @@
             padding: 20px;
             margin-top: 20px;
             border-left: 6px solid #1e3b5a;
+            font-size: 0.98rem;
         }
-        .radio-group {
-            display: flex;
-            gap: 25px;
-            background: #edf2f8;
-            padding: 14px 22px;
-            border-radius: 60px;
-            margin-top: 12px;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
+        .verdict h3 {
+            margin-bottom: 10px;
         }
         .footnote {
             font-size: 0.85rem;
@@ -263,7 +253,6 @@
             ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成，确认后请点击右侧“分析结果”。
         </div>
 
-        <!-- 进度条区域 -->
         <div class="progress">
             <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
             <div class="progress-bar-bg">
@@ -271,12 +260,8 @@
             </div>
         </div>
 
-        <!-- 当前题目渲染区 -->
-        <div id="questionContainer" class="question-box">
-            <!-- 动态注入题目 -->
-        </div>
+        <div id="questionContainer" class="question-box"></div>
 
-        <!-- 导航按钮 -->
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" disabled>← 上一题</button>
             <button class="nav-btn primary" id="nextBtn">下一题 →</button>
@@ -284,7 +269,7 @@
         <div class="warning-tip" id="navHint"></div>
     </div>
 
-    <!-- 右侧：结果面板 + 控制 -->
+    <!-- 右侧：结果面板（移除了手动第三步） -->
     <div class="right-panel">
         <h2 style="font-weight:600; margin-bottom:16px;">📋 测评结论</h2>
         <button class="btn" id="calculateBtn">🔍 分析结果</button>
@@ -293,30 +278,17 @@
             <div class="score-board" id="scoreBoard">
                 <div style="text-align:center; padding:20px; color:#4e6d8c;">完成所有题目后点击分析</div>
             </div>
-            <div class="verdict" id="verdictBox"></div>
-        </div>
-
-        <!-- 第三步：是否造成伤害（主观判断） -->
-        <div style="margin-top: 30px; background: #f0ede5; border-radius: 30px; padding: 18px;">
-            <p style="font-weight:600; margin-bottom:12px;">⚖️ 第三步 · 最终确认</p>
-            <p style="font-size:0.95rem; margin-bottom:12px;">他/她的这些行为，有没有对你或别人造成实际的痛苦、被利用、被伤害？</p>
-            <div class="radio-group">
-                <label>
-                    <input type="radio" name="harm" value="yes" id="harmYes"> 是，有伤害
-                </label>
-                <label>
-                    <input type="radio" name="harm" value="no" id="harmNo" checked> 否，无实质伤害
-                </label>
+            <div class="verdict" id="verdictBox">
+                <!-- 详细结论将动态填充 -->
             </div>
-            <p class="footnote" style="margin-top:15px;">*结合主观感受，结论更准确</p>
         </div>
-        <p class="footnote">本测试基于黑暗四角星模型，用于人际觉察，非专业诊断。</p>
+        <p class="footnote">本测试基于黑暗四角星模型，用于人际觉察，非专业诊断。请结合相处中的真实感受阅读结论。</p>
     </div>
 </div>
 
 <script>
     (function() {
-        // ----- 题目数据 (保留维度用于计分，但不在UI显示) -----
+        // ----- 题目数据 -----
         const questions = [
             { id: 1, text: "在餐厅、商店等场合，他对服务员/店员的态度通常是？", dim: "m",
               options: ["礼貌客气，常说谢谢", "基本正常，偶尔不耐烦", "颐指气使，稍不满意就训斥"] },
@@ -360,15 +332,14 @@
               options: ["和现实中一样，讲道理", "偶尔发泄情绪", "完全变个人，攻击性强，享受骂战"] }
         ];
 
-        // 维度中文名映射
+        // 维度中文名
         const dimNames = { 'm': '马基雅维利主义', 'n': '自恋', 'p': '心理变态', 's': '日常施虐' };
 
-        // 当前题索引 (0-19)
+        // 当前题索引 0~19
         let currentIndex = 0;
-        // 存储答案 (长度为20，值为1,2,3 或 null)
         let answers = new Array(20).fill(null);
 
-        // DOM 元素
+        // DOM
         const questionContainer = document.getElementById('questionContainer');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -385,7 +356,7 @@
             let html = `<div class="q-text">${currentIndex+1}. ${q.text}</div>`;
             html += `<div class="options">`;
             q.options.forEach((optText, idx) => {
-                const val = idx + 1; // 1,2,3
+                const val = idx + 1;
                 const checked = answers[currentIndex] === val ? 'checked' : '';
                 html += `<label class="option ${checked ? 'selected' : ''}">`;
                 html += `<input type="radio" name="qOption" value="${val}" ${checked} data-val="${val}">`;
@@ -395,15 +366,12 @@
             html += `</div>`;
             questionContainer.innerHTML = html;
 
-            // 为当前页的radio添加事件监听 (保存答案)
             document.querySelectorAll('input[name="qOption"]').forEach(radio => {
                 radio.addEventListener('change', function(e) {
                     const val = parseInt(e.target.value);
                     answers[currentIndex] = val;
-                    // 高亮选中的选项
                     document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
                     e.target.closest('.option').classList.add('selected');
-                    // 更新进度条和提示
                     updateProgressAndButtons();
                 });
             });
@@ -411,19 +379,13 @@
             updateProgressAndButtons();
         }
 
-        // 更新进度显示、按钮状态、提示
         function updateProgressAndButtons() {
-            // 更新进度文本
             currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
-            // 更新进度条 (已答题数/20)
             const answeredCount = answers.filter(a => a !== null).length;
-            const percent = (answeredCount / 20) * 100;
-            progressFill.style.width = percent + '%';
+            progressFill.style.width = (answeredCount / 20 * 100) + '%';
 
-            // 上一页按钮状态
             prevBtn.disabled = currentIndex === 0;
 
-            // 下一页按钮文字 & 禁用逻辑 (最后一页)
             if (currentIndex === 19) {
                 nextBtn.innerText = '最后一题';
                 nextBtn.disabled = true;
@@ -435,7 +397,6 @@
             }
         }
 
-        // 切换题目
         function goToPrev() {
             if (currentIndex > 0) {
                 currentIndex--;
@@ -445,41 +406,73 @@
 
         function goToNext() {
             if (currentIndex < 19) {
-                // 如果当前题未答，可以允许跳转，但最好提醒一下？允许自由跳转，不强求，但为了友好，加个提醒
                 if (answers[currentIndex] === null) {
-                    if (!confirm('当前题目尚未选择，确定跳过吗？')) {
-                        return;
-                    }
+                    if (!confirm('当前题目尚未选择，确定跳过吗？')) return;
                 }
                 currentIndex++;
                 renderQuestion();
             }
         }
 
-        // 事件绑定
         prevBtn.addEventListener('click', goToPrev);
         nextBtn.addEventListener('click', goToNext);
 
+        // 详细结论陈述库
+        function getDescription(type, severity, scores) {
+            // 根据主导类型和严重程度返回详细描述 (结合伤害有无做双轨建议)
+            let mainDesc = '';
+            let adviceWithHarm = '';
+            let adviceWithoutHarm = '';
+
+            // 核心描述
+            if (type.includes('马基雅维利主义主导')) {
+                mainDesc = '💡 核心特征：这类人极度理性，善于权谋，把人际关系当作棋局。他们擅长操纵、利用他人，以达成自己的目的，且往往缺乏常规的道德约束。\n\n🧩 常见表现：他们可能很有魅力，能说会道，但你总会隐约感觉被算计。他们喜欢抢占功劳、推卸责任，对不同的人说不同的话，很难看到他们真诚的情感流露。';
+                adviceWithHarm = '⚠️ 如果你已经感到被利用、被欺骗，或被抢功伤害：最好的方式是保持距离，建立清晰的边界。不要透露太多个人想法，不要指望情感打动，只谈利益和规则。如果涉及职场，保留证据，避免单独合作。';
+                adviceWithoutHarm = '🔹 如果目前并未造成实质伤害：可以继续普通交往，但别托付真心。保持观察，注意他是否在不同场合表里如一。';
+            } else if (type.includes('自恋主导')) {
+                mainDesc = '💡 核心特征：这类人需要持续的关注和赞美，内心深处却极度脆弱。他们认为自己特殊，理应享受特权，缺乏对他人感受的共情。\n\n🧩 常见表现：永远的话题中心，永远在炫耀，永远无法真诚地为他人高兴。他们可能会打断你，把话题拉回自己；也可能因为一句批评就暴怒或冷暴力。';
+                adviceWithHarm = '⚠️ 如果他的行为让你长期压抑、自我价值感降低：你需要减少情感付出，学会“捧杀”但不走心。对他们来说，你的感受不重要，所以保护好自己最重要。可以礼貌疏远，避免深入交流个人情感。';
+                adviceWithoutHarm = '🔹 如果只是轻度自恋（有点爱炫耀），可以一笑而过。不必较真，也不必试图改变他。';
+            } else if (type.includes('心理变态主导')) {
+                mainDesc = '💡 核心特征：这类人最核心的是缺乏共情和愧疚感，情感淡漠，追求刺激。他们看起来冷静、大胆，但无法真正理解他人的痛苦。\n\n🧩 常见表现：他们可能爱冒险，喜欢追求新鲜感，情绪变化快，却很少真正伤心或后悔。在你难过时，他们显得冷漠、不知所措，甚至不耐烦。承诺像风一样，说变就变。';
+                adviceWithHarm = '⚠️ 如果已经造成伤害（如背叛、不负责任、情感冷漠）：请果断远离，不要试图感化。他们极难改变，继续投入只会让你更受伤。保持表面客气，但别指望任何情感支持。';
+                adviceWithoutHarm = '🔹 如果只是普通朋友，没有深度情感羁绊：保持表面友好，但别投入情感，别指望他们承担责任。可以一起玩乐，但别托付重要事情。';
+            } else if (type.includes('日常施虐主导')) {
+                mainDesc = '💡 核心特征：这类人从他人的痛苦中获得快乐。他们喜欢看别人尴尬、难受、出丑，并以此为乐。这是一种主动的恶意。\n\n🧩 常见表现：言语上爱戳人痛处，开玩笑毫无界限；网络上喜欢骂战，现实中爱传播难堪的八卦；玩游戏时热衷于碾压新手并嘲讽。';
+                adviceWithHarm = '⚠️ 如果你明确感到被取乐、被伤害：请立刻拉开距离。他们不会因为你难受而收敛，只会变本加厉。保护自己的情绪安全是第一位的。不要和他们争论，远离是最好的方法。';
+                adviceWithoutHarm = '🔹 如果目前只是轻微嘴贱，并未真的伤害你：可以严肃地表明你的底线，看对方是否尊重。如果继续，说明他并不在意你的感受，那时再远离也不迟。';
+            } else if (type.includes('混合型')) {
+                mainDesc = '💡 核心特征：当多个黑暗特质叠加，情况会更复杂。比如“自恋+心理变态”可能催生毫无愧疚的剥削者；“马基雅维利主义+日常施虐”可能成为享受操控过程的阴谋家。\n\n🧩 常见表现：他们会兼具不同维度的特点，比如既有操控的算计，又有冷漠的无情，还可能从你的痛苦中获得满足。';
+                adviceWithHarm = '⚠️ 如果已经造成伤害：建议保持最高警惕，逐步疏远。不要试图改变或拯救，多重特质意味着更复杂的内在，改变极难。优先保护自己。';
+                adviceWithoutHarm = '🔹 如果只是轻度混合且无伤害：仍需谨慎，因为多重特质可能意味着更复杂的内在。可以维持浅层交往，但不要涉及利益或情感依赖。';
+            } else if (type.includes('无明显主导类型') && severity === '有黑暗特质') {
+                mainDesc = '💡 核心特征：你可能在某些场景下观察到一些自私、冷漠或炫耀，但还没有形成固定的模式。每个人或多或少都有一些黑暗面，这很正常。\n\n🧩 常见表现：偶尔会表现出自我中心，偶尔会冷眼旁观，但整体上仍能顾及他人感受，也会后悔和补偿。';
+                adviceWithHarm = '⚠️ 如果你感到偶尔被冒犯：可以坦诚沟通，表达你的感受。一般人会调整。如果对方完全不在乎，再考虑疏远。';
+                adviceWithoutHarm = '🔹 正常交往即可，但可以留意那些让你不舒服的点，有机会可以坦诚沟通。';
+            } else { // 正常范围
+                mainDesc = '💡 核心特征：这个人情绪稳定，共情能力强，在大多数场景下表现出健康的社交模式。即使有缺点，也是人之常情。\n\n🧩 常见表现：尊重他人，能换位思考，愿意承担责任，懂得开玩笑的边界。';
+                adviceWithHarm = '⚠️ 如果你仍然感到受伤，可能源于个别事件或误会，可以尝试沟通。如果长期不适，也许是不合适，而不是人格问题。';
+                adviceWithoutHarm = '🔹 珍惜这样的关系，同时也保持正常的边界和尊重。';
+            }
+
+            return { mainDesc, adviceWithHarm, adviceWithoutHarm };
+        }
+
         // 分析结果按钮
         calculateBtn.addEventListener('click', function() {
-            // 检查所有题目是否已回答
-            const missingIndices = [];
-            answers.forEach((ans, idx) => {
-                if (ans === null) missingIndices.push(idx+1);
-            });
-            if (missingIndices.length > 0) {
-                alert(`还有 ${missingIndices.length} 题未完成：第 ${missingIndices.join(', ')} 题。请返回作答。`);
-                // 可自动跳转到第一个未答题
-                currentIndex = missingIndices[0] - 1;
+            // 检查是否所有题都答了
+            const missing = answers.reduce((acc, ans, idx) => ans === null ? acc.concat(idx+1) : acc, []);
+            if (missing.length > 0) {
+                alert(`还有 ${missing.length} 题未完成：第 ${missing.join(', ')} 题。请返回作答。`);
+                currentIndex = missing[0] - 1;
                 renderQuestion();
                 return;
             }
 
-            // 计算维度得分
+            // 计算得分
             const dimScores = { m:0, n:0, p:0, s:0 };
             let total = 0;
             let cCount = 0;
-
             for (let i = 0; i < 20; i++) {
                 const dim = questions[i].dim;
                 const val = answers[i];
@@ -488,12 +481,9 @@
                 if (val === 3) cCount++;
             }
 
-            const mScore = dimScores['m'];
-            const nScore = dimScores['n'];
-            const pScore = dimScores['p'];
-            const sScore = dimScores['s'];
+            const mScore = dimScores['m'], nScore = dimScores['n'], pScore = dimScores['p'], sScore = dimScores['s'];
 
-            // 显著维度（>=12）
+            // 显著维度 (>=12)
             const significant = [];
             if (mScore >= 12) significant.push('马基雅维利主义');
             if (nScore >= 12) significant.push('自恋');
@@ -512,23 +502,11 @@
             else if ( total >= 46 || cCount >=9 ) severityLevel = '高度疑似黑暗人格';
             else severityLevel = '有黑暗特质';
 
-            // 伤害判断
-            const harmYes = document.getElementById('harmYes').checked;
-            const harmNo = document.getElementById('harmNo').checked;
+            // 获取详细描述
+            const desc = getDescription(typeText, severityLevel, {mScore,nScore,pScore,sScore});
 
-            let finalVerdict = '';
-            if (harmNo) {
-                if (severityLevel === '正常范围') finalVerdict = '✅ 正常范围，无明显黑暗人格特征。';
-                else if (severityLevel === '有黑暗特质') finalVerdict = `⚠️ 他具有${significant.length>0?typeText:'某些黑暗特质'}，但未造成实质伤害。可以相处，但建议留心。`;
-                else if (severityLevel === '高度疑似黑暗人格') finalVerdict = `🔍 高度疑似黑暗人格 (${typeText})，但目前未观察到实质伤害。建议观察边界。`;
-            } else {
-                if (severityLevel === '正常范围') finalVerdict = `⚠️ 虽然得分在正常范围，但你感受到伤害，这很重要。请相信直觉，重新评估关系。`;
-                else if (severityLevel === '有黑暗特质') finalVerdict = `❗ 典型黑暗人格 (${typeText})，且已造成伤害。建议保持距离，认真评估关系。`;
-                else if (severityLevel === '高度疑似黑暗人格') finalVerdict = `🚨 高度疑似黑暗人格 (${typeText})，且已造成实际伤害。强烈建议设立边界，考虑远离。`;
-            }
-
-            // 更新右侧面板
-            document.getElementById('scoreBoard').innerHTML = `
+            // 更新得分板
+            scoreBoard.innerHTML = `
                 <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore} / 15</span></div>
                 <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore} / 15</span></div>
                 <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${pScore} / 15</span></div>
@@ -537,12 +515,23 @@
                 <div class="dimension-row" style="border-bottom:none;"><span>C选项数 (3分项)</span><span class="highlight">${cCount}</span></div>
             `;
 
+            // 构建详细结论HTML，包含两种情况
             verdictBox.innerHTML = `
-                <h3 style="margin-bottom:8px;">📌 判定结果</h3>
+                <h3>📌 判定结果</h3>
                 <p><strong>主导类型：</strong>${typeText}</p>
                 <p><strong>严重程度：</strong>${severityLevel}</p>
-                <p><strong>伤害确认：</strong>${harmYes ? '✅ 有实际伤害' : '❌ 无实质伤害'}</p>
-                <p style="margin-top:14px; background:white; padding:16px; border-radius:28px;"><span style="font-weight:600;">最终结论：</span><br>${finalVerdict}</p>
+                <div style="background:white; border-radius:28px; padding:16px; margin:16px 0;">
+                    ${desc.mainDesc.replace(/\n/g, '<br>')}
+                </div>
+                <div style="background:#fff2e0; border-radius:28px; padding:16px; margin:16px 0;">
+                    <span style="font-weight:700;">⚖️ 如果他的行为已经让你感到痛苦、被利用或被伤害：</span><br>
+                    ${desc.adviceWithHarm}
+                </div>
+                <div style="background:#e5f0fa; border-radius:28px; padding:16px; margin:16px 0;">
+                    <span style="font-weight:700;">🌱 如果目前并未造成实质伤害，大家相安无事：</span><br>
+                    ${desc.adviceWithoutHarm}
+                </div>
+                <p style="font-size:0.9rem; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
             `;
         });
 

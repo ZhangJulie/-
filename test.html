@@ -21,18 +21,16 @@
             align-items: flex-start;
         }
         .container {
-            max-width: 1000px;
+            max-width: 700px;
             margin: 0 auto;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
         }
         .header {
             background: white;
             border-radius: 36px;
             padding: 20px 22px;
             box-shadow: 0 10px 25px rgba(0,30,60,0.1);
+            margin-bottom: 16px;
         }
         h1 {
             font-size: 32px;
@@ -52,42 +50,11 @@
             color: #1e3b5a;
             border: 1px solid #cbd7e6;
         }
-        .main {
-            display: flex;
-            flex-direction: row;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .left-panel {
-            flex: 2;
-            min-width: 280px;
+        .card {
             background: white;
             border-radius: 36px;
             padding: 24px 20px;
             box-shadow: 0 15px 30px rgba(0,30,60,0.1);
-        }
-        /* 右侧面板：静态说明，无实时得分 */
-        .right-panel {
-            flex: 1;
-            min-width: 240px;
-            background: white;
-            border-radius: 36px;
-            padding: 24px 20px;
-            box-shadow: 0 15px 30px rgba(0,30,60,0.1);
-            height: fit-content;
-            font-size: 14px;
-            color: #1e3b5a;
-        }
-        .right-panel h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        .info-box {
-            background: #e7eef8;
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 15px;
         }
         #questionArea, #resultArea {
             transition: opacity 0.2s;
@@ -200,22 +167,6 @@
             opacity: 0.3;
             pointer-events: none;
         }
-        .btn {
-            background: #1e3b5a;
-            color: white;
-            border: none;
-            padding: 14px 18px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin: 15px 0 10px;
-        }
-        .btn:hover {
-            background: #143048;
-        }
         .verdict {
             background: #e1eefb;
             border-radius: 28px;
@@ -223,23 +174,6 @@
             margin-top: 15px;
             border-left: 5px solid #1e3b5a;
             font-size: 14px;
-        }
-        .footnote {
-            font-size: 12px;
-            color: #4f6883;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #d4e2f2;
-        }
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            h1 { font-size: 28px; }
-            .desc { font-size: 13px; padding: 10px 14px; }
-            .left-panel, .right-panel { padding: 18px 16px; }
-            .q-text { font-size: 18px; }
-            .option { padding: 12px 16px; font-size: 14px; }
-            .nav-btn { font-size: 15px; padding: 12px 14px; }
-            .btn { font-size: 15px; }
         }
         .badge {
             background: #1e3b5a;
@@ -251,11 +185,20 @@
             margin-bottom: 12px;
             font-size: 14px;
         }
-        .result-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
+        .footnote {
+            font-size: 12px;
+            color: #4f6883;
+            margin-top: 20px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 28px; }
+            .desc { font-size: 13px; padding: 10px 14px; }
+            .card { padding: 18px 16px; }
+            .q-text { font-size: 18px; }
+            .option { padding: 12px 16px; font-size: 14px; }
+            .nav-btn { font-size: 15px; padding: 12px 14px; }
         }
     </style>
 </head>
@@ -268,51 +211,36 @@
         </div>
     </div>
 
-    <div class="main">
-        <!-- 左侧：题目区域/结果区域 -->
-        <div class="left-panel">
-            <!-- 答题区 -->
-            <div id="questionArea">
-                <div class="progress">
-                    <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
-                    <div class="progress-bar-bg">
-                        <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
-                    </div>
+    <!-- 卡片区域：只包含题目或结果，无其他板块 -->
+    <div class="card">
+        <!-- 答题区 -->
+        <div id="questionArea">
+            <div class="progress">
+                <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
                 </div>
-                <div id="questionContainer" class="question-box"></div>
-                <div class="nav-buttons">
-                    <button class="nav-btn" id="prevBtn">← 上一题</button>
-                    <button class="nav-btn primary" id="nextBtn">下一题 →</button>
-                </div>
-                <div id="navHint" style="font-size:13px; margin-top:10px; color:#3b5f8a;"></div>
             </div>
-
-            <!-- 结果区（无分数表格，仅保留文字结论） -->
-            <div id="resultArea">
-                <div class="result-header">
-                    <span class="badge">测评报告</span>
-                    <span style="font-size: 14px; color: #2b4b6e;">详细分析</span>
-                </div>
-                <!-- 详细结论，不再显示维度分数 -->
-                <div class="verdict" id="resultVerdict"></div>
-                <p class="footnote" style="text-align:center;">测评完成，感谢使用</p>
+            <div id="questionContainer" class="question-box"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn">← 上一题</button>
+                <button class="nav-btn primary" id="nextBtn">下一题 →</button>
             </div>
+            <div id="navHint" style="font-size:13px; margin-top:10px; color:#3b5f8a;"></div>
         </div>
 
-        <!-- 右侧面板：静态说明（无实时得分） -->
-        <div class="right-panel">
-            <h2>🔍 关于测评</h2>
-            <div class="info-box">
-                <p>每题请根据真实观察选择，完成后点击“确认答案”查看详细报告。本测试结果仅供参考，请结合自身感受判断。</p>
-            </div>
-            <p class="footnote">一次兑换码仅限一次答题，确认后不可更改。</p>
+        <!-- 结果区（无分数表格，仅文字结论） -->
+        <div id="resultArea">
+            <span class="badge">测评报告</span>
+            <div class="verdict" id="resultVerdict"></div>
+            <p class="footnote">测评完成，感谢使用</p>
         </div>
     </div>
 </div>
 
 <script>
     (function() {
-        // ----- 题目数据 -----
+        // ----- 题目数据 (与原版一致) -----
         const questions = [
             { id: 1, text: "在餐厅、商店等场合，他对服务员/店员的态度通常是？", dim: "m",
               options: ["礼貌客气，常说谢谢", "基本正常，偶尔不耐烦", "颐指气使，稍不满意就训斥"] },
@@ -356,12 +284,10 @@
               options: ["和现实中一样，讲道理", "偶尔发泄情绪", "完全变个人，攻击性强，享受骂战"] }
         ];
 
-        const dimNames = { 'm': '马基雅维利主义', 'n': '自恋', 'p': '心理变态', 's': '日常施虐' };
-
         // 状态
         let currentIndex = 0;
         let answers = new Array(20).fill(null);
-        let completed = false; // 是否已完成测评（不可再答题）
+        let completed = false;
 
         // DOM
         const questionArea = document.getElementById('questionArea');
@@ -374,7 +300,6 @@
         const navHint = document.getElementById('navHint');
         const resultVerdict = document.getElementById('resultVerdict');
 
-        // 更新进度和按钮状态
         function updateProgressAndButtons() {
             if (completed) return;
 
@@ -400,7 +325,6 @@
             }
         }
 
-        // 渲染当前题目
         function renderQuestion() {
             if (completed) return;
             const q = questions[currentIndex];
@@ -428,7 +352,7 @@
                     if (currentIndex < 19) {
                         goToNext(); // 自动下一题
                     } else {
-                        updateProgressAndButtons(); // 最后一题更新按钮状态
+                        updateProgressAndButtons();
                     }
                 });
             });
@@ -453,15 +377,14 @@
                 currentIndex++;
                 renderQuestion();
             } else if (currentIndex === 19 && answers[19] !== null) {
-                showResult(); // 确认答案
+                showResult();
             }
         }
 
-        // 显示结果（无分数表格）
         function showResult() {
             completed = true;
 
-            // 计算得分（仅用于内部判定，不显示）
+            // 计算得分（仅内部使用）
             const dimScores = { m:0, n:0, p:0, s:0 };
             let total = 0;
             let cCount = 0;
@@ -473,7 +396,6 @@
                 if (val === 3) cCount++;
             }
 
-            // 显著维度
             const significant = [];
             if (dimScores['m'] >= 12) significant.push('马基雅维利主义');
             if (dimScores['n'] >= 12) significant.push('自恋');
@@ -493,7 +415,6 @@
 
             const desc = getDescription(typeText, severityLevel);
 
-            // 构建纯文字结论（不带分数表格）
             resultVerdict.innerHTML = `
                 <h3 style="margin-bottom:8px;">📌 判定结果</h3>
                 <p><strong>主导类型：</strong>${typeText}</p>
@@ -512,12 +433,10 @@
                 <p style="font-size:13px; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
             `;
 
-            // 切换显示
             questionArea.style.display = 'none';
             resultArea.style.display = 'block';
         }
 
-        // 描述库
         function getDescription(type, severity) {
             let mainDesc = '', adviceWithHarm = '', adviceWithoutHarm = '';
             if (type.includes('马基雅维利主义主导')) {
@@ -552,11 +471,9 @@
             return { mainDesc, adviceWithHarm, adviceWithoutHarm };
         }
 
-        // 事件绑定
         prevBtn.addEventListener('click', goToPrev);
         nextBtn.addEventListener('click', goToNext);
 
-        // 初始化
         renderQuestion();
     })();
 </script>

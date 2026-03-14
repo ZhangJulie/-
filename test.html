@@ -14,110 +14,132 @@
             font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f0f5fa;
             color: #1a2b3c;
-            padding: 20px;
+            padding: 16px;
             line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1000px;
             margin: 0 auto;
+            width: 100%;
             display: flex;
-            flex-direction: row;
-            gap: 24px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 16px;
         }
-        .left-panel {
-            flex: 2;
-            min-width: 320px;
+        /* 头部区域 (标题+说明) */
+        .header {
             background: white;
             border-radius: 36px;
-            padding: 28px 30px;
-            box-shadow: 0 20px 35px -8px rgba(0,30,60,0.15);
-        }
-        .right-panel {
-            flex: 1;
-            min-width: 280px;
-            background: white;
-            border-radius: 36px;
-            padding: 28px 24px;
-            box-shadow: 0 20px 35px -8px rgba(0,30,60,0.15);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
+            padding: 20px 22px;
+            box-shadow: 0 10px 25px rgba(0,30,60,0.1);
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 32px;  /* 默认桌面大小 */
             font-weight: 700;
             letter-spacing: -0.5px;
             background: linear-gradient(145deg, #1f3a5f, #102a40);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
         .desc {
             background: #e7eef8;
-            padding: 16px 22px;
-            border-radius: 40px;
-            margin-bottom: 30px;
-            font-size: 1.05rem;
+            padding: 12px 16px;
+            border-radius: 30px;
+            font-size: 14px;
             color: #1e3b5a;
             border: 1px solid #cbd7e6;
         }
+        /* 主内容区：左右分栏在手机上堆叠 */
+        .main {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .left-panel, .right-panel {
+            background: white;
+            border-radius: 36px;
+            padding: 24px 20px;
+            box-shadow: 0 15px 30px rgba(0,30,60,0.1);
+        }
+        .left-panel {
+            flex: 2;
+            min-width: 280px;
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 240px;
+            height: fit-content;
+        }
+        /* 题目区域/结果区域切换 */
+        #questionArea, #resultArea {
+            transition: opacity 0.2s;
+        }
+        #resultArea {
+            display: none;
+        }
+        /* 进度条 */
         .progress {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             font-weight: 500;
             color: #2b4b6e;
+            font-size: 14px;
         }
         .progress-bar-bg {
-            height: 10px;
+            height: 8px;
             background: #d9e2ef;
             border-radius: 20px;
             flex: 1;
-            margin: 0 15px;
+            margin: 0 12px;
         }
         .progress-fill {
-            height: 10px;
+            height: 8px;
             background: #2b4f7b;
             border-radius: 20px;
             width: 0%;
             transition: width 0.2s;
         }
         .question-num {
-            font-size: 1rem;
             background: #1e3b5a;
             color: white;
-            padding: 5px 18px;
+            padding: 4px 14px;
             border-radius: 40px;
+            font-size: 13px;
+            white-space: nowrap;
         }
         .question-box {
-            margin: 30px 0 40px;
+            margin: 20px 0 25px;
         }
         .q-text {
-            font-size: 1.7rem;
+            font-size: 20px;
             font-weight: 600;
-            line-height: 1.3;
-            margin-bottom: 40px;
+            line-height: 1.4;
+            margin-bottom: 25px;
             color: #0b253a;
         }
         .options {
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            margin-top: 20px;
+            gap: 12px;
         }
         .option {
             display: flex;
             align-items: flex-start;
-            gap: 18px;
+            gap: 14px;
             background: #f7faff;
-            padding: 18px 24px;
-            border-radius: 50px;
+            padding: 14px 18px;
+            border-radius: 40px;
             border: 2px solid transparent;
             transition: all 0.15s;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 15px;
         }
         .option:hover {
             background: #ecf3fe;
@@ -126,26 +148,26 @@
         .option.selected {
             background: #e1ebfa;
             border-color: #2b4f7b;
-            box-shadow: 0 6px 12px rgba(30,70,120,0.1);
+            box-shadow: 0 4px 10px rgba(30,70,120,0.1);
         }
         input[type="radio"] {
-            margin-top: 3px;
+            margin-top: 2px;
             accent-color: #1f3a5f;
-            transform: scale(1.3);
+            transform: scale(1.2);
             flex-shrink: 0;
         }
         .nav-buttons {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: space-between;
-            margin-top: 40px;
+            margin-top: 25px;
         }
         .nav-btn {
             background: white;
             border: 2px solid #c1d3e8;
-            padding: 16px 28px;
-            border-radius: 60px;
-            font-size: 1.1rem;
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-size: 16px;
             font-weight: 600;
             color: #1d3957;
             cursor: pointer;
@@ -158,43 +180,41 @@
             border-color: #1e3b5a;
             color: white;
         }
-        .nav-btn.primary:hover {
-            background: #143048;
-        }
-        .nav-btn:hover {
-            background: #e2ecf9;
+        .nav-btn.primary:disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
         .nav-btn:disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             pointer-events: none;
         }
         .btn {
             background: #1e3b5a;
             color: white;
             border: none;
-            padding: 16px 20px;
-            border-radius: 60px;
-            font-size: 1.2rem;
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-size: 16px;
             font-weight: 600;
             width: 100%;
             cursor: pointer;
             transition: background 0.2s;
-            box-shadow: 0 10px 20px rgba(0,35,70,0.2);
-            margin: 20px 0 16px;
+            margin: 15px 0 10px;
         }
         .btn:hover {
             background: #143048;
         }
         .score-board {
             background: #edf4fc;
-            border-radius: 32px;
-            padding: 20px 18px;
-            margin: 20px 0;
+            border-radius: 28px;
+            padding: 16px 14px;
+            margin: 15px 0;
+            font-size: 14px;
         }
         .dimension-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px dashed #b1c7e0;
         }
         .dimension-name {
@@ -206,83 +226,108 @@
         }
         .highlight {
             background: #fedfa3;
-            padding: 4px 16px;
+            padding: 3px 12px;
             border-radius: 40px;
             font-weight: 700;
         }
         .verdict {
             background: #e1eefb;
-            border-radius: 32px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 6px solid #1e3b5a;
-            font-size: 0.98rem;
-        }
-        .verdict h3 {
-            margin-bottom: 10px;
+            border-radius: 28px;
+            padding: 18px;
+            margin-top: 15px;
+            border-left: 5px solid #1e3b5a;
+            font-size: 14px;
         }
         .footnote {
-            font-size: 0.85rem;
+            font-size: 12px;
             color: #4f6883;
-            margin-top: 20px;
-            padding-top: 16px;
+            margin-top: 16px;
+            padding-top: 12px;
             border-top: 1px solid #d4e2f2;
         }
-        .warning-tip {
-            background: #fef2db;
-            border-radius: 28px;
-            padding: 12px 18px;
-            font-size: 0.95rem;
-            margin: 15px 0;
+        /* 手机优化 */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 28px; }
+            .desc { font-size: 13px; padding: 10px 14px; }
+            .left-panel, .right-panel { padding: 18px 16px; }
+            .q-text { font-size: 18px; }
+            .option { padding: 12px 16px; font-size: 14px; }
+            .nav-btn { font-size: 15px; padding: 12px 14px; }
+            .btn { font-size: 15px; }
         }
-        @media (max-width: 800px) {
-            .right-panel {
-                position: relative;
-                top: 0;
-            }
-            .q-text { font-size: 1.4rem; }
+
+        /* 结果区卡片样式 */
+        .result-card {
+            background: #f7faff;
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .badge {
+            background: #1e3b5a;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- 左侧：分页题目 -->
-    <div class="left-panel">
+    <!-- 头部 (标题+说明) 独立出来，更清爽 -->
+    <div class="header">
         <h1>TA是隐藏的黑暗人格吗？</h1>
         <div class="desc">
-            ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成，确认后请点击右侧“分析结果”。
+            ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成。
         </div>
-
-        <div class="progress">
-            <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
-            <div class="progress-bar-bg">
-                <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
-            </div>
-        </div>
-
-        <div id="questionContainer" class="question-box"></div>
-
-        <div class="nav-buttons">
-            <button class="nav-btn" id="prevBtn" disabled>← 上一题</button>
-            <button class="nav-btn primary" id="nextBtn">下一题 →</button>
-        </div>
-        <div class="warning-tip" id="navHint"></div>
     </div>
 
-    <!-- 右侧：结果面板（移除了手动第三步） -->
-    <div class="right-panel">
-        <h2 style="font-weight:600; margin-bottom:16px;">📋 测评结论</h2>
-        <button class="btn" id="calculateBtn">🔍 分析结果</button>
-
-        <div id="scoreDisplay">
-            <div class="score-board" id="scoreBoard">
-                <div style="text-align:center; padding:20px; color:#4e6d8c;">完成所有题目后点击分析</div>
+    <!-- 左右主区域 -->
+    <div class="main">
+        <!-- 左侧：题目区域 和 结果区域（二选一） -->
+        <div class="left-panel">
+            <!-- 答题区 -->
+            <div id="questionArea">
+                <div class="progress">
+                    <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
+                    </div>
+                </div>
+                <div id="questionContainer" class="question-box"></div>
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prevBtn">← 上一题</button>
+                    <button class="nav-btn primary" id="nextBtn">下一题 →</button>
+                </div>
+                <div id="navHint" style="font-size:13px; margin-top:10px; color:#3b5f8a;"></div>
             </div>
-            <div class="verdict" id="verdictBox">
-                <!-- 详细结论将动态填充 -->
+
+            <!-- 结果区（初始隐藏） -->
+            <div id="resultArea">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                    <span class="badge">测评报告</span>
+                    <span style="font-size: 14px; color: #2b4b6e;">详细分析</span>
+                </div>
+                <!-- 得分概览 -->
+                <div class="score-board" id="resultScoreBoard"></div>
+                <!-- 详细结论 -->
+                <div class="verdict" id="resultVerdict"></div>
+                <button class="btn" id="restartBtn">重新测评</button>
             </div>
         </div>
-        <p class="footnote">本测试基于黑暗四角星模型，用于人际觉察，非专业诊断。请结合相处中的真实感受阅读结论。</p>
+
+        <!-- 右侧面板（简版得分，也可保留作为参考） -->
+        <div class="right-panel">
+            <h2 style="font-size: 18px; font-weight:600; margin-bottom:10px;">📋 实时得分</h2>
+            <div class="score-board" id="sideScoreBoard">
+                <div style="text-align:center; padding:10px; color:#4e6d8c;">完成题目后更新</div>
+            </div>
+            <p class="footnote">基于黑暗四角星模型·人际觉察</p>
+        </div>
     </div>
 </div>
 
@@ -332,23 +377,51 @@
               options: ["和现实中一样，讲道理", "偶尔发泄情绪", "完全变个人，攻击性强，享受骂战"] }
         ];
 
-        // 维度中文名
         const dimNames = { 'm': '马基雅维利主义', 'n': '自恋', 'p': '心理变态', 's': '日常施虐' };
 
-        // 当前题索引 0~19
+        // 状态
         let currentIndex = 0;
         let answers = new Array(20).fill(null);
 
         // DOM
+        const questionArea = document.getElementById('questionArea');
+        const resultArea = document.getElementById('resultArea');
         const questionContainer = document.getElementById('questionContainer');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const currentQDisplay = document.getElementById('currentQDisplay');
         const progressFill = document.getElementById('progressFill');
         const navHint = document.getElementById('navHint');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const scoreBoard = document.getElementById('scoreBoard');
-        const verdictBox = document.getElementById('verdictBox');
+        const sideScoreBoard = document.getElementById('sideScoreBoard');
+        const resultScoreBoard = document.getElementById('resultScoreBoard');
+        const resultVerdict = document.getElementById('resultVerdict');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // 辅助更新进度显示
+        function updateProgressAndButtons() {
+            currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
+            const answeredCount = answers.filter(a => a !== null).length;
+            progressFill.style.width = (answeredCount / 20 * 100) + '%';
+
+            prevBtn.disabled = currentIndex === 0;
+
+            // 处理最后一题按钮文本
+            if (currentIndex === 19) {
+                // 最后一题，如果已经选了答案，启用按钮并显示“确认答案”
+                if (answers[19] !== null) {
+                    nextBtn.disabled = false;
+                    nextBtn.innerText = '确认答案';
+                } else {
+                    nextBtn.disabled = true;
+                    nextBtn.innerText = '最后一题';
+                }
+                navHint.innerText = answers[19] !== null ? '✔️ 已选，点击“确认答案”查看结果' : '请选择一项';
+            } else {
+                nextBtn.innerText = '下一题 →';
+                nextBtn.disabled = false; // 未到最后一题总是可用（即使没选也可点击跳过，但我们允许跳过）
+                navHint.innerText = '';
+            }
+        }
 
         // 渲染当前题目
         function renderQuestion() {
@@ -366,37 +439,31 @@
             html += `</div>`;
             questionContainer.innerHTML = html;
 
+            // 监听选项改变
             document.querySelectorAll('input[name="qOption"]').forEach(radio => {
                 radio.addEventListener('change', function(e) {
                     const val = parseInt(e.target.value);
                     answers[currentIndex] = val;
                     document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
                     e.target.closest('.option').classList.add('selected');
-                    updateProgressAndButtons();
+
+                    // 自动跳转逻辑
+                    if (currentIndex < 19) {
+                        // 非最后一题，自动进入下一题
+                        goToNext();
+                    } else {
+                        // 最后一题，更新按钮状态
+                        updateProgressAndButtons();
+                    }
+                    // 无论哪一题，更新进度条和侧边栏（可实时刷新分数预览？）
+                    updateSideScore();
                 });
             });
 
             updateProgressAndButtons();
         }
 
-        function updateProgressAndButtons() {
-            currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
-            const answeredCount = answers.filter(a => a !== null).length;
-            progressFill.style.width = (answeredCount / 20 * 100) + '%';
-
-            prevBtn.disabled = currentIndex === 0;
-
-            if (currentIndex === 19) {
-                nextBtn.innerText = '最后一题';
-                nextBtn.disabled = true;
-                navHint.innerText = '✅ 已完成所有题目，点击右侧“分析结果”查看结论。';
-            } else {
-                nextBtn.innerText = '下一题 →';
-                nextBtn.disabled = false;
-                navHint.innerText = '';
-            }
-        }
-
+        // 切换题目
         function goToPrev() {
             if (currentIndex > 0) {
                 currentIndex--;
@@ -406,25 +473,132 @@
 
         function goToNext() {
             if (currentIndex < 19) {
+                // 如果当前没选答案，可以允许跳过，但提醒一下
                 if (answers[currentIndex] === null) {
                     if (!confirm('当前题目尚未选择，确定跳过吗？')) return;
                 }
                 currentIndex++;
                 renderQuestion();
+            } else if (currentIndex === 19 && answers[19] !== null) {
+                // 最后一题且已选答案，显示结果
+                showResult();
             }
         }
 
-        prevBtn.addEventListener('click', goToPrev);
-        nextBtn.addEventListener('click', goToNext);
+        // 显示结果（隐藏题目区，显示结果区）
+        function showResult() {
+            // 计算得分
+            const dimScores = { m:0, n:0, p:0, s:0 };
+            let total = 0;
+            let cCount = 0;
+            for (let i = 0; i < 20; i++) {
+                const dim = questions[i].dim;
+                const val = answers[i];
+                dimScores[dim] += val;
+                total += val;
+                if (val === 3) cCount++;
+            }
 
-        // 详细结论陈述库
-        function getDescription(type, severity, scores) {
-            // 根据主导类型和严重程度返回详细描述 (结合伤害有无做双轨建议)
-            let mainDesc = '';
-            let adviceWithHarm = '';
-            let adviceWithoutHarm = '';
+            const mScore = dimScores['m'], nScore = dimScores['n'], pScore = dimScores['p'], sScore = dimScores['s'];
 
-            // 核心描述
+            // 显著维度
+            const significant = [];
+            if (mScore >= 12) significant.push('马基雅维利主义');
+            if (nScore >= 12) significant.push('自恋');
+            if (pScore >= 12) significant.push('心理变态');
+            if (sScore >= 12) significant.push('日常施虐');
+
+            let typeText = '';
+            if (significant.length === 0) typeText = '无明显主导类型';
+            else if (significant.length === 1) typeText = significant[0] + '主导';
+            else typeText = '混合型：' + significant.join(' + ');
+
+            let severityLevel = '';
+            if (total <= 35 && cCount <= 3) severityLevel = '正常范围';
+            else if ( (total >= 36 && total <=45) || (cCount >=4 && cCount <=8) ) severityLevel = '有黑暗特质';
+            else if ( total >= 46 || cCount >=9 ) severityLevel = '高度疑似黑暗人格';
+            else severityLevel = '有黑暗特质';
+
+            // 获取详细描述
+            const desc = getDescription(typeText, severityLevel);
+
+            // 更新左侧结果区
+            resultScoreBoard.innerHTML = `
+                <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore} / 15</span></div>
+                <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore} / 15</span></div>
+                <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${pScore} / 15</span></div>
+                <div class="dimension-row"><span class="dimension-name">日常施虐</span><span class="dimension-score">${sScore} / 15</span></div>
+                <div class="dimension-row" style="border-bottom:none; margin-top:6px;"><span>总分</span><span class="highlight">${total} / 60</span></div>
+                <div class="dimension-row" style="border-bottom:none;"><span>C选项数</span><span class="highlight">${cCount}</span></div>
+            `;
+
+            resultVerdict.innerHTML = `
+                <h3 style="margin-bottom:8px;">📌 判定结果</h3>
+                <p><strong>主导类型：</strong>${typeText}</p>
+                <p><strong>严重程度：</strong>${severityLevel}</p>
+                <div style="background:white; border-radius:20px; padding:15px; margin:15px 0;">
+                    ${desc.mainDesc.replace(/\n/g, '<br>')}
+                </div>
+                <div style="background:#fff2e0; border-radius:20px; padding:15px; margin:15px 0;">
+                    <span style="font-weight:700;">⚖️ 如果他的行为已经让你感到痛苦、被利用或被伤害：</span><br>
+                    ${desc.adviceWithHarm}
+                </div>
+                <div style="background:#e5f0fa; border-radius:20px; padding:15px; margin:15px 0;">
+                    <span style="font-weight:700;">🌱 如果目前并未造成实质伤害，大家相安无事：</span><br>
+                    ${desc.adviceWithoutHarm}
+                </div>
+                <p style="font-size:13px; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
+            `;
+
+            // 同时更新右侧边栏（简版）
+            sideScoreBoard.innerHTML = `
+                <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore}</span></div>
+                <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore}</span></div>
+                <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${pScore}</span></div>
+                <div class="dimension-row"><span class="dimension-name">日常施虐</span><span class="dimension-score">${sScore}</span></div>
+                <div class="dimension-row" style="border-bottom:none;"><span>总分</span><span class="highlight">${total}</span></div>
+            `;
+
+            // 切换可见性
+            questionArea.style.display = 'none';
+            resultArea.style.display = 'block';
+        }
+
+        // 重新测评
+        function restart() {
+            answers = new Array(20).fill(null);
+            currentIndex = 0;
+            questionArea.style.display = 'block';
+            resultArea.style.display = 'none';
+            renderQuestion();
+            sideScoreBoard.innerHTML = `<div style="text-align:center; padding:10px; color:#4e6d8c;">完成题目后更新</div>`;
+        }
+
+        // 更新侧边栏分数（实时预览）
+        function updateSideScore() {
+            const dimScores = { m:0, n:0, p:0, s:0 };
+            let total = 0;
+            for (let i = 0; i < 20; i++) {
+                if (answers[i] !== null) {
+                    const dim = questions[i].dim;
+                    const val = answers[i];
+                    dimScores[dim] += val;
+                    total += val;
+                }
+            }
+            sideScoreBoard.innerHTML = `
+                <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${dimScores['m']}</span></div>
+                <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${dimScores['n']}</span></div>
+                <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${dimScores['p']}</span></div>
+                <div class="dimension-row"><span class="dimension-name">日常施虐</span><span class="dimension-score">${dimScores['s']}</span></div>
+                <div class="dimension-row" style="border-bottom:none;"><span>已答总分</span><span class="highlight">${total}</span></div>
+                <div style="font-size:12px; color:#2b4b6e; margin-top:8px;">实时预览，最终以分析为准</div>
+            `;
+        }
+
+        // 描述库
+        function getDescription(type, severity) {
+            let mainDesc = '', adviceWithHarm = '', adviceWithoutHarm = '';
             if (type.includes('马基雅维利主义主导')) {
                 mainDesc = '💡 核心特征：这类人极度理性，善于权谋，把人际关系当作棋局。他们擅长操纵、利用他人，以达成自己的目的，且往往缺乏常规的道德约束。\n\n🧩 常见表现：他们可能很有魅力，能说会道，但你总会隐约感觉被算计。他们喜欢抢占功劳、推卸责任，对不同的人说不同的话，很难看到他们真诚的情感流露。';
                 adviceWithHarm = '⚠️ 如果你已经感到被利用、被欺骗，或被抢功伤害：最好的方式是保持距离，建立清晰的边界。不要透露太多个人想法，不要指望情感打动，只谈利益和规则。如果涉及职场，保留证据，避免单独合作。';
@@ -454,88 +628,15 @@
                 adviceWithHarm = '⚠️ 如果你仍然感到受伤，可能源于个别事件或误会，可以尝试沟通。如果长期不适，也许是不合适，而不是人格问题。';
                 adviceWithoutHarm = '🔹 珍惜这样的关系，同时也保持正常的边界和尊重。';
             }
-
             return { mainDesc, adviceWithHarm, adviceWithoutHarm };
         }
 
-        // 分析结果按钮
-        calculateBtn.addEventListener('click', function() {
-            // 检查是否所有题都答了
-            const missing = answers.reduce((acc, ans, idx) => ans === null ? acc.concat(idx+1) : acc, []);
-            if (missing.length > 0) {
-                alert(`还有 ${missing.length} 题未完成：第 ${missing.join(', ')} 题。请返回作答。`);
-                currentIndex = missing[0] - 1;
-                renderQuestion();
-                return;
-            }
+        // 事件绑定
+        prevBtn.addEventListener('click', goToPrev);
+        nextBtn.addEventListener('click', goToNext);
+        restartBtn.addEventListener('click', restart);
 
-            // 计算得分
-            const dimScores = { m:0, n:0, p:0, s:0 };
-            let total = 0;
-            let cCount = 0;
-            for (let i = 0; i < 20; i++) {
-                const dim = questions[i].dim;
-                const val = answers[i];
-                dimScores[dim] += val;
-                total += val;
-                if (val === 3) cCount++;
-            }
-
-            const mScore = dimScores['m'], nScore = dimScores['n'], pScore = dimScores['p'], sScore = dimScores['s'];
-
-            // 显著维度 (>=12)
-            const significant = [];
-            if (mScore >= 12) significant.push('马基雅维利主义');
-            if (nScore >= 12) significant.push('自恋');
-            if (pScore >= 12) significant.push('心理变态');
-            if (sScore >= 12) significant.push('日常施虐');
-
-            let typeText = '';
-            if (significant.length === 0) typeText = '无明显主导类型';
-            else if (significant.length === 1) typeText = significant[0] + '主导';
-            else typeText = '混合型黑暗人格：' + significant.join(' + ');
-
-            // 严重程度
-            let severityLevel = '';
-            if (total <= 35 && cCount <= 3) severityLevel = '正常范围';
-            else if ( (total >= 36 && total <=45) || (cCount >=4 && cCount <=8) ) severityLevel = '有黑暗特质';
-            else if ( total >= 46 || cCount >=9 ) severityLevel = '高度疑似黑暗人格';
-            else severityLevel = '有黑暗特质';
-
-            // 获取详细描述
-            const desc = getDescription(typeText, severityLevel, {mScore,nScore,pScore,sScore});
-
-            // 更新得分板
-            scoreBoard.innerHTML = `
-                <div class="dimension-row"><span class="dimension-name">马基雅维利主义</span><span class="dimension-score">${mScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">自恋</span><span class="dimension-score">${nScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">心理变态</span><span class="dimension-score">${pScore} / 15</span></div>
-                <div class="dimension-row"><span class="dimension-name">日常施虐</span><span class="dimension-score">${sScore} / 15</span></div>
-                <div class="dimension-row" style="border-bottom:none; margin-top:8px;"><span>总分</span><span class="highlight">${total} / 60</span></div>
-                <div class="dimension-row" style="border-bottom:none;"><span>C选项数 (3分项)</span><span class="highlight">${cCount}</span></div>
-            `;
-
-            // 构建详细结论HTML，包含两种情况
-            verdictBox.innerHTML = `
-                <h3>📌 判定结果</h3>
-                <p><strong>主导类型：</strong>${typeText}</p>
-                <p><strong>严重程度：</strong>${severityLevel}</p>
-                <div style="background:white; border-radius:28px; padding:16px; margin:16px 0;">
-                    ${desc.mainDesc.replace(/\n/g, '<br>')}
-                </div>
-                <div style="background:#fff2e0; border-radius:28px; padding:16px; margin:16px 0;">
-                    <span style="font-weight:700;">⚖️ 如果他的行为已经让你感到痛苦、被利用或被伤害：</span><br>
-                    ${desc.adviceWithHarm}
-                </div>
-                <div style="background:#e5f0fa; border-radius:28px; padding:16px; margin:16px 0;">
-                    <span style="font-weight:700;">🌱 如果目前并未造成实质伤害，大家相安无事：</span><br>
-                    ${desc.adviceWithoutHarm}
-                </div>
-                <p style="font-size:0.9rem; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
-            `;
-        });
-
-        // 初始化第一题
+        // 初始化
         renderQuestion();
     })();
 </script>

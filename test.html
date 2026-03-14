@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>TA是隐藏的黑暗人格吗？</title>
+    <!-- 引入兑换码管理脚本 -->
+    <script src="codes.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -31,6 +33,7 @@
             padding: 20px 22px;
             box-shadow: 0 10px 25px rgba(0,30,60,0.1);
             margin-bottom: 16px;
+            position: relative;
         }
         h1 {
             font-size: 32px;
@@ -41,6 +44,26 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
             line-height: 1.2;
+        }
+        .code-badge {
+            display: inline-block;
+            background: #dce7f3;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1f3a57;
+            border: 1px solid #b5c9de;
+            margin-bottom: 10px;
+        }
+        .code-badge span {
+            font-family: monospace;
+            font-weight: 700;
+            background: #2a405b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-left: 6px;
         }
         .desc {
             background: #e7eef8;
@@ -206,6 +229,10 @@
 <div class="container">
     <div class="header">
         <h1>TA是隐藏的黑暗人格吗？</h1>
+        <!-- 显示当前兑换码 -->
+        <div class="code-badge">
+            兑换码 <span id="codeValue">—</span>
+        </div>
         <div class="desc">
             ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成。
         </div>
@@ -240,6 +267,32 @@
 
 <script>
     (function() {
+        // ----- 获取并验证兑换码 -----
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code') || '';
+
+        // 显示兑换码
+        document.getElementById('codeValue').textContent = code || '无';
+
+        // 验证兑换码有效性（无效则跳回兑换页）
+        if (code) {
+            if (typeof window.validateCode === 'function') {
+                const validation = window.validateCode(code);
+                if (!validation.valid) {
+                    alert('兑换码无效或已使用：' + validation.message);
+                    window.location.href = 'https://zhangjulie.github.io/-/redeem.html';
+                    return;
+                }
+            } else {
+                alert('系统初始化失败，请刷新');
+                return;
+            }
+        } else {
+            alert('请通过兑换页面进入');
+            window.location.href = 'https://zhangjulie.github.io/-/redeem.html';
+            return;
+        }
+
         // ----- 题目数据 (与原版一致) -----
         const questions = [
             { id: 1, text: "在餐厅、商店等场合，他对服务员/店员的态度通常是？", dim: "m",
@@ -435,6 +488,11 @@
 
             questionArea.style.display = 'none';
             resultArea.style.display = 'block';
+
+            // 标记兑换码为已使用（仅当成功显示结果后）
+            if (code && typeof window.markCodeAsUsed === 'function') {
+                window.markCodeAsUsed(code);
+            }
         }
 
         function getDescription(type, severity) {

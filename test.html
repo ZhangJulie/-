@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>TA是隐藏的黑暗人格吗？</title>
-    <!-- 引入兑换码管理脚本 -->
-    <script src="codes.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -33,7 +31,6 @@
             padding: 20px 22px;
             box-shadow: 0 10px 25px rgba(0,30,60,0.1);
             margin-bottom: 16px;
-            position: relative;
         }
         h1 {
             font-size: 32px;
@@ -45,26 +42,444 @@
             margin-bottom: 8px;
             line-height: 1.2;
         }
-        /* 添加兑换码显示样式 */
-        .code-badge {
-            display: inline-block;
-            background: #dce7f3;
-            padding: 4px 12px;
+        .desc {
+            background: #e7eef8;
+            padding: 12px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #1e3b5a;
+            border: 1px solid #cbd7e6;
+        }
+        .card {
+            background: white;
+            border-radius: 36px;
+            padding: 24px 20px;
+            box-shadow: 0 15px 30px rgba(0,30,60,0.1);
+        }
+        #questionArea, #resultArea {
+            transition: opacity 0.2s;
+        }
+        #resultArea {
+            display: none;
+        }
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-weight: 500;
+            color: #2b4b6e;
+            font-size: 14px;
+        }
+        .progress-bar-bg {
+            height: 8px;
+            background: #d9e2ef;
+            border-radius: 20px;
+            flex: 1;
+            margin: 0 12px;
+        }
+        .progress-fill {
+            height: 8px;
+            background: #2b4f7b;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.2s;
+        }
+        .question-num {
+            background: #1e3b5a;
+            color: white;
+            padding: 4px 14px;
             border-radius: 40px;
             font-size: 13px;
-            font-weight: 500;
-            color: #1f3a57;
-            border: 1px solid #b5c9de;
-            margin-bottom: 10px;
+            white-space: nowrap;
         }
-        .code-badge span {
-            font-family: monospace;
-            font-weight: 700;
-            background: #2a405b;
+        .question-box {
+            margin: 20px 0 25px;
+        }
+        .q-text {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            color: #0b253a;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #f7faff;
+            padding: 14px 18px;
+            border-radius: 40px;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .option:hover {
+            background: #ecf3fe;
+            border-color: #a1bbd9;
+        }
+        .option.selected {
+            background: #e1ebfa;
+            border-color: #2b4f7b;
+            box-shadow: 0 4px 10px rgba(30,70,120,0.1);
+        }
+        input[type="radio"] {
+            margin-top: 2px;
+            accent-color: #1f3a5f;
+            transform: scale(1.2);
+            flex-shrink: 0;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .nav-btn {
+            background: white;
+            border: 2px solid #c1d3e8;
+            padding: 14px 18px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d3957;
+            cursor: pointer;
+            transition: all 0.15s;
+            flex: 1;
+            text-align: center;
+        }
+        .nav-btn.primary {
+            background: #1e3b5a;
+            border-color: #1e3b5a;
             color: white;
-            padding: 2px 8px;
-            border-radius: 30px;
-            margin-left: 6px;
+        }
+        .nav-btn.primary:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .verdict {
+            background: #e1eefb;
+            border-radius: 28px;
+            padding: 18px;
+            margin-top: 15px;
+            border-left: 5px solid #1e3b5a;
+            font-size: 14px;
+        }
+        .badge {
+            background: #1e3b5a;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .footnote {
+            font-size: 12px;
+            color: #4f6883;
+            margin-top: 20px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 28px; }
+            .desc { font-size: 13px; padding: 10px 14px; }
+            .card { padding: 18px 16px; }
+            .q-text { font-size: 18px; }
+            .option { padding: 12px 16px; font-size: 14px; }
+            .nav-btn { font-size: 15px; padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>TA是隐藏的黑暗人格吗？</h1>
+        <div class="desc">
+            ⚡ 根据你对被观察者的日常了解，为每个场景选择最符合的描述。共20题，预计5分钟完成。
+        </div>
+    </div>
+
+    <!-- 卡片区域：只包含题目或结果，无其他板块 -->
+    <div class="card">
+        <!-- 答题区 -->
+        <div id="questionArea">
+            <div class="progress">
+                <span class="question-num" id="currentQDisplay">第 1 / 20 题</span>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="progressFill" style="width: 5%;"></div>
+                </div>
+            </div>
+            <div id="questionContainer" class="question-box"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn">← 上一题</button>
+                <button class="nav-btn primary" id="nextBtn">下一题 →</button>
+            </div>
+            <div id="navHint" style="font-size:13px; margin-top:10px; color:#3b5f8a;"></div>
+        </div>
+
+        <!-- 结果区（无分数表格，仅文字结论） -->
+        <div id="resultArea">
+            <span class="badge">测评报告</span>
+            <div class="verdict" id="resultVerdict"></div>
+            <p class="footnote">测评完成，感谢使用</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 题目数据 (与原版一致) -----
+        const questions = [
+            { id: 1, text: "在餐厅、商店等场合，他对服务员/店员的态度通常是？", dim: "m",
+              options: ["礼貌客气，常说谢谢", "基本正常，偶尔不耐烦", "颐指气使，稍不满意就训斥"] },
+            { id: 2, text: "当你告诉他一个好消息（如升职、获奖）时，他的反应是？", dim: "n",
+              options: ["真心为你高兴，追问细节", "恭喜一下，然后聊别的", "马上讲自己更厉害的事，或泼冷水、阴阳怪气"] },
+            { id: 3, text: "一起玩桌游、电竞或其他有输赢的游戏时，如果他赢了，通常会？", dim: "s",
+              options: ["正常庆祝，适可而止", "有点得意，但不过分", "故意嘲讽、羞辱对手，享受对方沮丧的样子"] },
+            { id: 4, text: "遇到堵车、排长队等需要等待的情况，他的表现是？", dim: "n",
+              options: ["耐心等待，自嘲两句", "有点烦躁，但能克制", "试图插队、骂规则，觉得自己不该被耽误"] },
+            { id: 5, text: "聊天时谈到有人被骗或被算计的新闻，他的第一反应往往是？", dim: "m",
+              options: ["同情受害者，谴责骗子", "觉得双方都有问题", "佩服骗子的手段，说受害者太蠢"] },
+            { id: 6, text: "聚会合影后，他通常会？", dim: "n",
+              options: ["看整体效果，大家好看就行", "先看自己，不好看会提意见", "只关心自己，别人被挡脸或拍丑了无所谓"] },
+            { id: 7, text: "当你生病、心情低落或遇到困难时，他通常会？", dim: "p",
+              options: ["主动关心，问你需要什么帮助", "简单问候一下，然后聊自己的事", "表现得不耐烦，或直接消失"] },
+            { id: 8, text: "有人当众出丑（如摔跤、说错话、被批评）时，他的反应是？", dim: "s",
+              options: ["帮忙解围或当没看见", "跟着笑一下，但马上停", "笑得最大声，事后反复提起取乐"] },
+            { id: 9, text: "多次聚餐或集体消费时，他在买单方面的表现是？", dim: "m",
+              options: ["主动AA，偶尔请客", "不主动也不拒绝，随大流", "总是忘带钱，或对AA斤斤计较"] },
+            { id: 10, text: "聊起年轻时做过的错事或坏事，他的态度是？", dim: "p",
+              options: ["表示后悔，觉得当时不对", "当笑话讲，但有点不好意思", "炫耀自己多厉害，毫无悔意"] },
+            { id: 11, text: "他曾经许下的承诺或说过的话，兑现率如何？", dim: "p",
+              options: ["说到做到，偶尔忘会解释", "大部分能做到，小事会忘", "经常开空头支票，从不落实"] },
+            { id: 12, text: "当你明确表示不喜欢他开的某个玩笑后，他会？", dim: "n",
+              options: ["立刻停止并道歉", "哦一声，以后少开", "说你开不起玩笑，变本加厉"] },
+            { id: 13, text: "他对流浪猫狗、小孩或比自己弱小的生命的态度是？", dim: "p",
+              options: ["有爱心，愿意帮忙", "不关心，但也不伤害", "故意吓唬或表现出冷漠"] },
+            { id: 14, text: "聊起过去合作完成的项目或工作成果，他通常会？", dim: "m",
+              options: ["肯定团队贡献，分享功劳", "说自己做得不错，也提队友", "把所有功劳归于自己，推卸失败责任"] },
+            { id: 15, text: "一起看悲剧电影或感人新闻时，他的情绪反应是？", dim: "p",
+              options: ["会被感动，有情绪反应", "比较平静，说“还行吧”", "完全没感觉，甚至觉得无聊好笑"] },
+            { id: 16, text: "吵架或意见不合时，他通常的表现是？", dim: "s",
+              options: ["就事论事，试图解决", "声音变大，但还能听进去", "故意说狠话，专戳对方痛处"] },
+            { id: 17, text: "对下属、实习生或职位低于他的人，他通常？", dim: "m",
+              options: ["耐心指导，平等对待", "公事公办，保持距离", "摆架子，随意使唤，不尊重"] },
+            { id: 18, text: "开车或坐车时，他的驾驶风格或对交通的态度是？", dim: "n",
+              options: ["遵守交规，平稳驾驶", "偶尔超速，但有分寸", "路怒症，别车骂人，觉得别人都傻"] },
+            { id: 19, text: "聊天时涉及他人隐私（如八卦、秘密），他的表现是？", dim: "s",
+              options: ["主动回避，不打听", "听听而已，不传播", "特别感兴趣，追问细节，甚至传播"] },
+            { id: 20, text: "在网上（如社交媒体、论坛）讨论时，他通常？", dim: "s",
+              options: ["和现实中一样，讲道理", "偶尔发泄情绪", "完全变个人，攻击性强，享受骂战"] }
+        ];
+
+        // 状态
+        let currentIndex = 0;
+        let answers = new Array(20).fill(null);
+        let completed = false;
+
+        // DOM
+        const questionArea = document.getElementById('questionArea');
+        const resultArea = document.getElementById('resultArea');
+        const questionContainer = document.getElementById('questionContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentQDisplay = document.getElementById('currentQDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const navHint = document.getElementById('navHint');
+        const resultVerdict = document.getElementById('resultVerdict');
+
+        function updateProgressAndButtons() {
+            if (completed) return;
+
+            currentQDisplay.innerText = `第 ${currentIndex+1} / 20 题`;
+            const answeredCount = answers.filter(a => a !== null).length;
+            progressFill.style.width = (answeredCount / 20 * 100) + '%';
+
+            prevBtn.disabled = currentIndex === 0;
+
+            if (currentIndex === 19) {
+                if (answers[19] !== null) {
+                    nextBtn.disabled = false;
+                    nextBtn.innerText = '确认答案';
+                } else {
+                    nextBtn.disabled = true;
+                    nextBtn.innerText = '最后一题';
+                }
+                navHint.innerText = answers[19] !== null ? '✔️ 已选，点击“确认答案”查看结果' : '请选择一项';
+            } else {
+                nextBtn.innerText = '下一题 →';
+                nextBtn.disabled = false;
+                navHint.innerText = '';
+            }
+        }
+
+        function renderQuestion() {
+            if (completed) return;
+            const q = questions[currentIndex];
+            let html = `<div class="q-text">${currentIndex+1}. ${q.text}</div>`;
+            html += `<div class="options">`;
+            q.options.forEach((optText, idx) => {
+                const val = idx + 1;
+                const checked = answers[currentIndex] === val ? 'checked' : '';
+                html += `<label class="option ${checked ? 'selected' : ''}">`;
+                html += `<input type="radio" name="qOption" value="${val}" ${checked} data-val="${val}">`;
+                html += `<span>${optText}</span>`;
+                html += `</label>`;
+            });
+            html += `</div>`;
+            questionContainer.innerHTML = html;
+
+            document.querySelectorAll('input[name="qOption"]').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    if (completed) return;
+                    const val = parseInt(e.target.value);
+                    answers[currentIndex] = val;
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    e.target.closest('.option').classList.add('selected');
+
+                    if (currentIndex < 19) {
+                        goToNext(); // 自动下一题
+                    } else {
+                        updateProgressAndButtons();
+                    }
+                });
+            });
+
+            updateProgressAndButtons();
+        }
+
+        function goToPrev() {
+            if (completed) return;
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function goToNext() {
+            if (completed) return;
+            if (currentIndex < 19) {
+                if (answers[currentIndex] === null) {
+                    if (!confirm('当前题目尚未选择，确定跳过吗？')) return;
+                }
+                currentIndex++;
+                renderQuestion();
+            } else if (currentIndex === 19 && answers[19] !== null) {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            completed = true;
+
+            // 计算得分（仅内部使用）
+            const dimScores = { m:0, n:0, p:0, s:0 };
+            let total = 0;
+            let cCount = 0;
+            for (let i = 0; i < 20; i++) {
+                const dim = questions[i].dim;
+                const val = answers[i];
+                dimScores[dim] += val;
+                total += val;
+                if (val === 3) cCount++;
+            }
+
+            const significant = [];
+            if (dimScores['m'] >= 12) significant.push('马基雅维利主义');
+            if (dimScores['n'] >= 12) significant.push('自恋');
+            if (dimScores['p'] >= 12) significant.push('心理变态');
+            if (dimScores['s'] >= 12) significant.push('日常施虐');
+
+            let typeText = '';
+            if (significant.length === 0) typeText = '无明显主导类型';
+            else if (significant.length === 1) typeText = significant[0] + '主导';
+            else typeText = '混合型：' + significant.join(' + ');
+
+            let severityLevel = '';
+            if (total <= 35 && cCount <= 3) severityLevel = '正常范围';
+            else if ( (total >= 36 && total <=45) || (cCount >=4 && cCount <=8) ) severityLevel = '有黑暗特质';
+            else if ( total >= 46 || cCount >=9 ) severityLevel = '高度疑似黑暗人格';
+            else severityLevel = '有黑暗特质';
+
+            const desc = getDescription(typeText, severityLevel);
+
+            resultVerdict.innerHTML = `
+                <h3 style="margin-bottom:8px;">📌 判定结果</h3>
+                <p><strong>主导类型：</strong>${typeText}</p>
+                <p><strong>严重程度：</strong>${severityLevel}</p>
+                <div style="background:white; border-radius:20px; padding:15px; margin:15px 0;">
+                    ${desc.mainDesc.replace(/\n/g, '<br>')}
+                </div>
+                <div style="background:#fff2e0; border-radius:20px; padding:15px; margin:15px 0;">
+                    <span style="font-weight:700;">⚖️ 如果他的行为已经让你感到痛苦、被利用或被伤害：</span><br>
+                    ${desc.adviceWithHarm}
+                </div>
+                <div style="background:#e5f0fa; border-radius:20px; padding:15px; margin:15px 0;">
+                    <span style="font-weight:700;">🌱 如果目前并未造成实质伤害，大家相安无事：</span><br>
+                    ${desc.adviceWithoutHarm}
+                </div>
+                <p style="font-size:13px; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
+            `;
+
+            questionArea.style.display = 'none';
+            resultArea.style.display = 'block';
+        }
+
+        function getDescription(type, severity) {
+            let mainDesc = '', adviceWithHarm = '', adviceWithoutHarm = '';
+            if (type.includes('马基雅维利主义主导')) {
+                mainDesc = '💡 核心特征：这类人极度理性，善于权谋，把人际关系当作棋局。他们擅长操纵、利用他人，以达成自己的目的，且往往缺乏常规的道德约束。\n\n🧩 常见表现：他们可能很有魅力，能说会道，但你总会隐约感觉被算计。他们喜欢抢占功劳、推卸责任，对不同的人说不同的话，很难看到他们真诚的情感流露。';
+                adviceWithHarm = '⚠️ 如果你已经感到被利用、被欺骗，或被抢功伤害：最好的方式是保持距离，建立清晰的边界。不要透露太多个人想法，不要指望情感打动，只谈利益和规则。如果涉及职场，保留证据，避免单独合作。';
+                adviceWithoutHarm = '🔹 如果目前并未造成实质伤害：可以继续普通交往，但别托付真心。保持观察，注意他是否在不同场合表里如一。';
+            } else if (type.includes('自恋主导')) {
+                mainDesc = '💡 核心特征：这类人需要持续的关注和赞美，内心深处却极度脆弱。他们认为自己特殊，理应享受特权，缺乏对他人感受的共情。\n\n🧩 常见表现：永远的话题中心，永远在炫耀，永远无法真诚地为他人高兴。他们可能会打断你，把话题拉回自己；也可能因为一句批评就暴怒或冷暴力。';
+                adviceWithHarm = '⚠️ 如果他的行为让你长期压抑、自我价值感降低：你需要减少情感付出，学会“捧杀”但不走心。对他们来说，你的感受不重要，所以保护好自己最重要。可以礼貌疏远，避免深入交流个人情感。';
+                adviceWithoutHarm = '🔹 如果只是轻度自恋（有点爱炫耀），可以一笑而过。不必较真，也不必试图改变他。';
+            } else if (type.includes('心理变态主导')) {
+                mainDesc = '💡 核心特征：这类人最核心的是缺乏共情和愧疚感，情感淡漠，追求刺激。他们看起来冷静、大胆，但无法真正理解他人的痛苦。\n\n🧩 常见表现：他们可能爱冒险，喜欢追求新鲜感，情绪变化快，却很少真正伤心或后悔。在你难过时，他们显得冷漠、不知所措，甚至不耐烦。承诺像风一样，说变就变。';
+                adviceWithHarm = '⚠️ 如果已经造成伤害（如背叛、不负责任、情感冷漠）：请果断远离，不要试图感化。他们极难改变，继续投入只会让你更受伤。保持表面客气，但别指望任何情感支持。';
+                adviceWithoutHarm = '🔹 如果只是普通朋友，没有深度情感羁绊：保持表面友好，但别投入情感，别指望他们承担责任。可以一起玩乐，但别托付重要事情。';
+            } else if (type.includes('日常施虐主导')) {
+                mainDesc = '💡 核心特征：这类人从他人的痛苦中获得快乐。他们喜欢看别人尴尬、难受、出丑，并以此为乐。这是一种主动的恶意。\n\n🧩 常见表现：言语上爱戳人痛处，开玩笑毫无界限；网络上喜欢骂战，现实中爱传播难堪的八卦；玩游戏时热衷于碾压新手并嘲讽。';
+                adviceWithHarm = '⚠️ 如果你明确感到被取乐、被伤害：请立刻拉开距离。他们不会因为你难受而收敛，只会变本加厉。保护自己的情绪安全是第一位的。不要和他们争论，远离是最好的方法。';
+                adviceWithoutHarm = '🔹 如果目前只是轻微嘴贱，并未真的伤害你：可以严肃地表明你的底线，看对方是否尊重。如果继续，说明他并不在意你的感受，那时再远离也不迟。';
+            } else if (type.includes('混合型')) {
+                // 更新后的混合型解读（包含六种组合速览）
+                mainDesc = `💡 核心心理画像\n当两个或以上的黑暗维度显著时，它们之间会发生化学反应，形成更复杂、更难预测的心理结构。这不是简单的人格叠加，而是一种更具适应性的组合——他们可能在不同情境下调用不同的“武器”，让你难以用单一模式应对。\n\n📊 常见组合速览\n• 马基雅维利主义 + 自恋：精致的利己主义者——既要操控全局，又要站在聚光灯下。\n• 马基雅维利主义 + 心理变态：冷静的投机者——算计中不带情感，利用后毫无愧疚。\n• 马基雅维利主义 + 日常施虐：享受操控的阴谋家——不仅利用你，还享受你痛苦的过程。\n• 自恋 + 心理变态：冷酷的掠食者——渴望崇拜，却对伤害你毫无感觉。\n• 自恋 + 日常施虐：恶意的表演者——你的难堪，是他最好的聚光灯。\n• 心理变态 + 日常施虐：冷漠的恶意者——没有情感，却能从你的痛苦中取乐。\n\n如果三个或四个维度同时显著：这类人往往具有极强的适应性和破坏性，他们可以在不同场合无缝切换面具，让你完全无法预测下一刻会发生什么。应对难度最高，建议保持最大距离。\n\n🧩 日常行为模式\n• 行为难以预测——你永远猜不透他们今天是冷静算计，还是恶意发作。\n• 在关系中可能时而让你被魅惑，时而被忽视，时而被伤害。\n• 对不同的人展现出完全不同的面孔，很难建立稳定预期。\n• 他们可能擅长在社交场合游刃有余，但亲密关系往往一片混乱。\n\n⚖️ 相处感受\n与混合型的人相处，最核心的感受是：混乱与疲惫。你无法用一套稳定的模式来应对他们，因为他们本身就是多变的。你可能今天觉得自己被理解，明天却被无情背叛。这种关系会逐渐侵蚀你的自我感，让你不断怀疑“是不是我哪里做得不对”。`;
+                adviceWithHarm = '⚠️ 如果已经造成伤害：\n• 最高级别警惕，逐步疏远——不要试图拯救或改变，多重特质意味着内心复杂，改变极难。优先保护自己的心理和财产安全。\n• 建立不可穿透的边界——不透露隐私，不卷入情感，不涉及利益。所有互动保持在最浅层。\n• 相信自己的感受——如果你总是感到压抑、混乱、自我怀疑，这不是你的问题，而是这段关系的毒性在起作用。';
+                adviceWithoutHarm = '🌱 如果尚未造成实质伤害：\n• 保持深度观察，但降低期待——可以维持浅层交往，但不要涉及利益或情感依赖。留意他们对待他人的方式——那是未来可能对待你的方式。\n• 不要被“好的一面”迷惑——混合型的人往往有迷人的一面，但那只是人格拼图的一角。问自己：我能接受他们最糟糕的那一面吗？\n• 设置心理防线——在交往中保留一部分自己，不要全情投入。如果你发现自己越来越小心翼翼，及时退后一步。';
+            } else if (type.includes('无明显主导类型') && severity === '有黑暗特质') {
+                mainDesc = '💡 核心特征：你可能在某些场景下观察到一些自私、冷漠或炫耀，但还没有形成固定的模式。每个人或多或少都有一些黑暗面，这很正常。\n\n🧩 常见表现：偶尔会表现出自我中心，偶尔会冷眼旁观，但整体上仍能顾及他人感受，也会后悔和补偿。';
+                adviceWithHarm = '⚠️ 如果你感到偶尔被冒犯：可以坦诚沟通，表达你的感受。一般人会调整。如果对方完全不在乎，再考虑疏远。';
+                adviceWithoutHarm = '🔹 正常交往即可，但可以留意那些让你不舒服的点，有机会可以坦诚沟通。';
+            } else { // 正常范围
+                mainDesc = '💡 核心特征：这个人情绪稳定，共情能力强，在大多数场景下表现出健康的社交模式。即使有缺点，也是人之常情。\n\n🧩 常见表现：尊重他人，能换位思考，愿意承担责任，懂得开玩笑的边界。';
+                adviceWithHarm = '⚠️ 如果你仍然感到受伤，可能源于个别事件或误会，可以尝试沟通。如果长期不适，也许是不合适，而不是人格问题。';
+                adviceWithoutHarm = '🔹 珍惜这样的关系，同时也保持正常的边界和尊重。';
+            }
+            return { mainDesc, adviceWithHarm, adviceWithoutHarm };
+        }
+
+        prevBtn.addEventListener('click', goToPrev);
+        nextBtn.addEventListener('click', goToNext);
+
+        renderQuestion();
+    })();
+</script>
+</body>
+</html>            margin-left: 6px;
         }
         .desc {
             background: #e7eef8;

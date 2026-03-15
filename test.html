@@ -191,10 +191,17 @@
         .verdict {
             background: #e1eefb;
             border-radius: 28px;
-            padding: 18px;
+            padding: 20px;
             margin-top: 15px;
             border-left: 5px solid #1e3b5a;
             font-size: 14px;
+            line-height: 1.6; /* 增加行高，提升可读性 */
+        }
+        .verdict p {
+            margin-bottom: 10px;
+        }
+        .verdict div {
+            margin-bottom: 16px;
         }
         .badge {
             background: #1e3b5a;
@@ -448,7 +455,7 @@
             }
         }
 
-        // 显示结果（与之前相同，但使用更新后的混合型描述）
+        // 显示结果（换行已通过 .replace(/\n/g, '<br>') 处理）
         function showResult() {
             completed = true;
 
@@ -492,11 +499,11 @@
                 </div>
                 <div style="background:#fff2e0; border-radius:20px; padding:15px; margin:15px 0;">
                     <span style="font-weight:700;">⚖️ 如果他的行为已经让你感到痛苦、被利用或被伤害：</span><br>
-                    ${desc.adviceWithHarm}
+                    ${desc.adviceWithHarm.replace(/\n/g, '<br>')}
                 </div>
                 <div style="background:#e5f0fa; border-radius:20px; padding:15px; margin:15px 0;">
                     <span style="font-weight:700;">🌱 如果目前并未造成实质伤害，大家相安无事：</span><br>
-                    ${desc.adviceWithoutHarm}
+                    ${desc.adviceWithoutHarm.replace(/\n/g, '<br>')}
                 </div>
                 <p style="font-size:13px; margin-top:10px;">※ 请根据你的真实感受对应阅读。直觉往往比分数更准确。</p>
             `;
@@ -505,7 +512,7 @@
             resultArea.style.display = 'block';
         }
 
-        // 描述库（包含更新后的混合型解读）
+        // 描述库（包含更新后的混合型解读，并已内含 \n 换行符）
         function getDescription(type, severity) {
             let mainDesc = '', adviceWithHarm = '', adviceWithoutHarm = '';
             if (type.includes('马基雅维利主义主导')) {

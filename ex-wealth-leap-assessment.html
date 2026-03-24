@@ -295,6 +295,20 @@
         .hidden {
             display: none;
         }
+
+        /* 测试页标题样式 */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .quiz-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e4b6e, #2c7aa0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
     </style>
 </head>
 <body>
@@ -306,7 +320,9 @@
         <div style="background: #f4f9fe; border-radius: 28px; padding: 20px; margin: 16px 0;">
             <p style="font-weight: 600; margin-bottom: 12px;">📌 填写前必读</p>
             <p style="margin-bottom: 12px; font-size: 0.9rem;">1️⃣ 请尽量基于<strong>客观事实</strong>（如TA实际跳槽的薪资涨幅、考取的证书、可验证的投资记录），而非分手后的情绪推测。</p>
-            <p style="margin-bottom: 8px; font-size: 0.9rem;">2️⃣ 分手后，你对TA的“决策方式”“时间使用结构”的了解可能已经过时。很多人分手后会像变了一个人。<br>⚠️ 本问卷结果，反映的可能是“你记忆中的TA”或“你想象中的TA”，而非真实当下的TA。请理性对待。</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;">2️⃣ 分手后，你对TA的“决策方式”“时间使用结构”的了解可能已经过时。很多人分手后会像变了一个人。</p>
+            <p style="margin-bottom: 12px; font-size: 0.9rem;">⚠️ 本问卷结果，反映的可能是“你记忆中的TA”或“你想象中的TA”，而非真实当下的TA。请理性对待。</p>
+            <p style="margin-top: 12px; font-size: 0.85rem; color: #1f6e8c;">共21题，预计5分钟。</p>
         </div>
         <button class="btn-primary" id="startBtn">开始评估 → 逐题作答</button>
         <footer>21个维度 | 每题需选评分（置信度已默认3）</footer>
@@ -314,6 +330,9 @@
 
     <!-- 测试页 (逐题模式) -->
     <div id="quizPage" class="page card hidden">
+        <div class="quiz-header">
+            <h2>💔 分手后，TA的身价会涨吗？</h2>
+        </div>
         <div class="progress-area">
             <div class="progress-text"><span id="currentQNumber">第1题</span><span id="totalQCount">/21</span></div>
             <div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div>

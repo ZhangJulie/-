@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>分手后，TA的身价会涨吗？——基于风控模型的潜力评估</title>
-    <!-- Chart.js 轻量图表库 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -21,13 +20,11 @@
             color: #0a2b3e;
         }
 
-        /* 主容器 */
         .app-container {
             max-width: 550px;
             margin: 0 auto;
         }
 
-        /* 通用卡片 */
         .card {
             background: white;
             border-radius: 36px;
@@ -37,13 +34,19 @@
             transition: all 0.2s ease;
         }
 
-        /* 说明页、测试页、结果页 */
         .page {
             animation: fadeIn 0.3s ease;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px);}
-            to { opacity: 1; transform: translateY(0);}
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -56,6 +59,7 @@
             color: transparent;
             margin-bottom: 12px;
         }
+
         .sub {
             color: #4b6b85;
             font-size: 0.85rem;
@@ -63,6 +67,7 @@
             border-left: 3px solid #90b4ce;
             padding-left: 12px;
         }
+
         .btn-primary {
             background: #1f6e8c;
             border: none;
@@ -75,26 +80,18 @@
             margin-top: 20px;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
-        .btn-primary:active { transform: scale(0.97); background: #155f7a; }
-        .btn-secondary {
-            background: #eef2f8;
-            border: 1px solid #cbdde9;
-            color: #2c6280;
-            padding: 12px 18px;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s;
-            text-align: center;
-        }
-        .btn-secondary:active { background: #e2eaf2; }
 
-        /* 进度条 */
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: #155f7a;
+        }
+
         .progress-area {
             margin-bottom: 24px;
         }
+
         .progress-text {
             font-size: 0.8rem;
             font-weight: 500;
@@ -103,12 +100,14 @@
             display: flex;
             justify-content: space-between;
         }
+
         .progress-bar-bg {
             background: #e2eaf1;
             border-radius: 40px;
             height: 8px;
             overflow: hidden;
         }
+
         .progress-fill {
             background: #1f6e8c;
             width: 0%;
@@ -117,7 +116,6 @@
             transition: width 0.2s;
         }
 
-        /* 问题区块 */
         .question-module-tag {
             display: inline-block;
             background: #eef2fc;
@@ -128,6 +126,7 @@
             color: #1f6e8c;
             margin-bottom: 12px;
         }
+
         .question-text {
             font-size: 1.3rem;
             font-weight: 620;
@@ -135,9 +134,11 @@
             margin-bottom: 28px;
             color: #0f2c3f;
         }
+
         .control-group {
-            margin-bottom: 28px;
+            margin-bottom: 32px;
         }
+
         .control-label {
             font-weight: 600;
             margin-bottom: 12px;
@@ -147,52 +148,57 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        .btn-group {
+
+        .btn-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
-        .score-btn {
+
+        .option-btn {
+            flex: 1 0 70px;
             background: #f4f8fe;
             border: 1px solid #cde0ed;
-            border-radius: 60px;
-            min-width: 52px;
-            height: 52px;
-            font-weight: 700;
-            font-size: 1.2rem;
+            border-radius: 28px;
+            padding: 8px 4px;
+            text-align: center;
             cursor: pointer;
             transition: 0.1s;
-            color: #1f3e54;
-            flex: 1 0 58px;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.02);
+            min-width: 64px;
         }
-        .score-btn.active {
+
+        .option-btn.active {
             background: #1f6e8c;
             border-color: #1f6e8c;
             color: white;
-            box-shadow: 0 4px 12px rgba(31,110,140,0.3);
+            box-shadow: 0 4px 12px rgba(31, 110, 140, 0.3);
         }
-        .btn-hint {
-            font-size: 0.7rem;
-            color: #6f8daa;
-            margin-top: 6px;
-            padding-left: 4px;
+
+        .option-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: block;
+            line-height: 1.3;
         }
-        .evidence-hint {
-            background: #f0f4fa;
-            border-radius: 20px;
-            padding: 10px 12px;
-            font-size: 0.75rem;
-            color: #2c6280;
-            margin-top: 12px;
-            border-left: 3px solid #5f9dc0;
+
+        .option-desc {
+            font-size: 0.65rem;
+            opacity: 0.85;
+            display: block;
+            line-height: 1.2;
         }
+
+        .active .option-desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         .nav-buttons {
             display: flex;
             gap: 12px;
             margin-top: 30px;
         }
+
         .nav-btn {
             flex: 1;
             background: white;
@@ -203,6 +209,7 @@
             cursor: pointer;
             text-align: center;
         }
+
         .nav-btn-primary {
             background: #1f6e8c;
             border: none;
@@ -217,11 +224,13 @@
             text-align: center;
             margin-bottom: 28px;
         }
+
         .big-score {
             font-size: 3.8rem;
             font-weight: 800;
             color: #1a5d7a;
         }
+
         .confidence-badge {
             background: #e6edf4;
             display: inline-block;
@@ -230,6 +239,7 @@
             margin-top: 12px;
             font-size: 0.85rem;
         }
+
         .interpret-box {
             background: #fff0df;
             border-radius: 28px;
@@ -238,35 +248,27 @@
             font-weight: 500;
             text-align: center;
         }
+
         .radar-wrapper {
             margin: 20px 0;
             background: #fefefe;
             border-radius: 28px;
             padding: 12px;
         }
+
         .module-list {
             background: #f8fafd;
             border-radius: 28px;
             padding: 16px;
             margin: 20px 0;
         }
+
         .module-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid #e2edf5;
             font-size: 0.9rem;
-        }
-        .restart-btn {
-            background: #ecf3f9;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            font-weight: 600;
-            margin-top: 20px;
-            cursor: pointer;
-            color: #1f6e8c;
         }
 
         footer {
@@ -275,10 +277,12 @@
             color: #8ba3bc;
             margin-top: 24px;
         }
+
         button {
             background: none;
             font-family: inherit;
         }
+
         .hidden {
             display: none;
         }
@@ -296,7 +300,7 @@
             <p style="margin-bottom: 8px; font-size: 0.9rem;">2️⃣ 分手后，你对TA的“决策方式”“时间使用结构”的了解可能已经过时。很多人分手后会像变了一个人。<br>⚠️ 本问卷结果，反映的可能是“你记忆中的TA”或“你想象中的TA”，而非真实当下的TA。请理性对待。</p>
         </div>
         <button class="btn-primary" id="startBtn">开始评估 → 逐题作答</button>
-        <footer>21个维度 | 每题需选评分+置信度</footer>
+        <footer>21个维度 | 每题需选评分（置信度已默认3）</footer>
     </div>
 
     <!-- 测试页 (逐题模式) -->
@@ -305,36 +309,30 @@
             <div class="progress-text"><span id="currentQNumber">第1题</span><span id="totalQCount">/21</span></div>
             <div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div>
         </div>
-        <div id="quizContent">
-            <!-- 动态渲染当前题目 -->
-        </div>
+        <div id="quizContent"></div>
         <div class="nav-buttons">
             <button id="prevBtn" class="nav-btn">◀ 上一题</button>
             <button id="nextBtn" class="nav-btn nav-btn-primary">下一题 ▶</button>
         </div>
     </div>
 
-    <!-- 结果页 -->
+    <!-- 结果页（无重新评估按钮） -->
     <div id="resultPage" class="page card hidden">
         <div id="resultContent"></div>
-        <button id="restartFromResultBtn" class="restart-btn">🔄 重新评估</button>
         <footer>评估基于你提供的21项数据 · 不可回溯修改</footer>
     </div>
 </div>
 
 <script>
-    // ----------------------------- 题库数据（所有“他”替换为“TA”）--------------------------------
+    // ---------- 题库（所有“他”改为“TA”）----------
     const questionsData = [
-        // A 人力资本 (3)
         { id: 1, module: "A", text: "技能稀缺性：TA当前的核心能力，在市场上难以替代？（难招程度/议价能力）", weightGroup: "A" },
         { id: 2, module: "A", text: "学习与迭代能力：过去1–2年，TA是否持续主动提升能力并发生明显变化？", weightGroup: "A" },
         { id: 3, module: "A", text: "收入增长趋势：过去3年，TA的收入是否呈现加速或跃迁趋势？", weightGroup: "A" },
-        // B 认知与决策 (4)
         { id: 4, module: "B", text: "风险决策能力：面对高收益但不确定的机会，TA是否愿意理性承担风险？", weightGroup: "B" },
         { id: 5, module: "B", text: "决策方式：TA做重要决策时，是否基于逻辑、信息或方法论，而非情绪？", weightGroup: "B" },
         { id: 6, module: "B", text: "长期规划能力：TA是否有清晰的3年以上规划，并持续执行？", weightGroup: "B" },
         { id: 7, module: "B", text: "财务知识与金钱心态：具备财务素养（复利/风险配置），将金钱视为工具而非压力或炫耀？", weightGroup: "B" },
-        // C 执行力 (7)
         { id: 8, module: "C", text: "时间使用结构：TA的时间是否主要投入在高价值（成长/事业）活动上？", weightGroup: "C" },
         { id: 9, module: "C", text: "延迟满足能力：TA是否能为了长期收益放弃短期享受？", weightGroup: "C" },
         { id: 10, module: "C", text: "抗压能力：在压力或失败下，TA是否仍能保持稳定甚至更高输出？", weightGroup: "C" },
@@ -342,13 +340,10 @@
         { id: 12, module: "C", text: "行动速度：当机会出现时，TA是否能快速行动？", weightGroup: "C" },
         { id: 13, module: "C", text: "储蓄与投资习惯：稳定储蓄率，并将收入转化为资产（有持续正回报/被动收入记录）", weightGroup: "C" },
         { id: 14, module: "C", text: "杠杆与规模化倾向：是否使用/计划使用杠杆（创业/股权/副业）放大成果？", weightGroup: "C" },
-        // D 外部环境 (2)
         { id: 15, module: "D", text: "行业前景：TA所在行业未来3–5年是否具备增长空间？", weightGroup: "D" },
         { id: 16, module: "D", text: "平台资源：TA是否处于能够放大能力的平台（公司/位置/资源）？", weightGroup: "D" },
-        // E 社会资本 (2)
         { id: 17, module: "E", text: "人脉质量：TA的人脉是否能带来实际机会或资源？", weightGroup: "E" },
         { id: 18, module: "E", text: "关键支持（贵人）：是否有人在关键时刻对TA产生实质性帮助？", weightGroup: "E" },
-        // F 关系影响 (3)
         { id: 19, module: "F", text: "关系中的状态：在你们关系中，TA整体是被消耗还是被促进？", weightGroup: "F" },
         { id: 20, module: "F", text: "分手后的状态变化：分手后，TA在专注度、效率或状态上是否有变化？", weightGroup: "F" },
         { id: 21, module: "F", text: "精力再分配：分手后，TA是否将更多精力投入到事业或成长？", weightGroup: "F" }
@@ -357,9 +352,20 @@
     const moduleWeights = { A: 0.30, B: 0.20, C: 0.25, D: 0.10, E: 0.10, F: 0.05 };
     const moduleNames = { A: '人力资本', B: '认知与决策', C: '执行力', D: '外部环境', E: '社会资本', F: '关系影响' };
 
-    // 每个答案存储 { score, confidence } 初始 null
-    let answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: null }));
-    let currentIndex = 0;        // 0-20
+    // 评分描述映射
+    const scoreDesc = { 1: '明显较差', 2: '偏弱', 3: '一般', 4: '较强', 5: '很强' };
+    // 置信度描述（证据导向）
+    const confDesc = {
+        1: '纯属猜测',
+        2: '少量间接证据',
+        3: '有一定直接证据',
+        4: '比较确定',
+        5: '非常确定'
+    };
+
+    // 答案存储，score 初始 null，confidence 默认 3
+    let answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
+    let currentIndex = 0;
     let radarChartInstance = null;
 
     // DOM 元素
@@ -374,7 +380,6 @@
     const totalQCountSpan = document.getElementById('totalQCount');
     const progressFill = document.getElementById('progressFill');
 
-    // 辅助: 显示/隐藏页面
     function showPage(pageId) {
         introPage.classList.add('hidden');
         quizPage.classList.add('hidden');
@@ -382,138 +387,105 @@
         document.getElementById(pageId).classList.remove('hidden');
     }
 
-    // 更新进度条和题号
     function updateProgress() {
-        const percent = ((currentIndex) / TOTAL_QS) * 100;
+        const percent = (currentIndex / TOTAL_QS) * 100;
         progressFill.style.width = `${percent}%`;
-        currentQNumberSpan.innerText = `第${currentIndex+1}题`;
+        currentQNumberSpan.innerText = `第${currentIndex + 1}题`;
         totalQCountSpan.innerText = `/${TOTAL_QS}`;
     }
 
-    // 获取当前题目模块信息
-    function getModuleLetter(idx) {
-        return questionsData[idx].module;
+    // 生成带说明的按钮组
+    function renderOptionButtons(type, currentValue) {
+        let items = '';
+        const map = type === 'score' ? scoreDesc : confDesc;
+        const range = [1, 2, 3, 4, 5];
+        for (let val of range) {
+            const activeClass = (currentValue === val) ? 'active' : '';
+            const numberLabel = val;
+            const descText = map[val];
+            items += `
+                <div class="option-btn ${activeClass}" data-type="${type}" data-val="${val}">
+                    <span class="option-number">${numberLabel}</span>
+                    <span class="option-desc">${descText}</span>
+                </div>
+            `;
+        }
+        return `<div class="btn-grid">${items}</div>`;
     }
 
-    // 渲染当前题目 (currentIndex)
     function renderCurrentQuestion() {
         const q = questionsData[currentIndex];
         const moduleLetter = q.module;
-        const answer = answers[currentIndex];
-        const selectedScore = answer?.score;
-        const selectedConf = answer?.confidence;
-        
-        // 构建评分按钮组 (1-5)
-        let scoreBtns = '';
-        for (let s=1; s<=5; s++) {
-            const activeClass = (selectedScore === s) ? 'active' : '';
-            scoreBtns += `<button type="button" class="score-btn ${activeClass}" data-type="score" data-val="${s}">${s}</button>`;
-        }
-        // 置信度按钮组 (1-5)
-        let confBtns = '';
-        for (let c=1; c<=5; c++) {
-            const activeClass = (selectedConf === c) ? 'active' : '';
-            confBtns += `<button type="button" class="score-btn ${activeClass}" data-type="confidence" data-val="${c}">${c}</button>`;
-        }
-        
-        // 评分辅助描述
-        const scoreHintMap = {1:'明显较差',2:'偏弱',3:'一般',4:'较强',5:'很强'};
-        let selectedScoreText = selectedScore ? scoreHintMap[selectedScore] : '未选择';
-        // 置信度证据导向描述
-        const evidenceMap = {
-            1:'纯属猜测 / 没有证据',
-            2:'少量间接证据（听朋友说过一次）',
-            3:'有一定直接证据（分手前了解，或分手后可靠信源）',
-            4:'比较确定（公开数据/近期实际成果可见）',
-            5:'非常确定（确凿证据且持续验证）'
-        };
-        let selectedEvidenceText = selectedConf ? evidenceMap[selectedConf] : '未选择';
-        
+        const ans = answers[currentIndex];
+        const selectedScore = ans?.score;
+        const selectedConf = ans?.confidence;
+
+        const scoreGroupHtml = renderOptionButtons('score', selectedScore);
+        const confGroupHtml = renderOptionButtons('confidence', selectedConf);
+
         const html = `
             <div>
                 <div class="question-module-tag">【${moduleLetter}】${moduleNames[moduleLetter]} 模块</div>
-                <div class="question-text">${currentIndex+1}. ${q.text}</div>
-                
+                <div class="question-text">${currentIndex + 1}. ${q.text}</div>
                 <div class="control-group">
-                    <div class="control-label">⭐ 评分 (1~5) <span style="font-weight:normal;">当前：${selectedScoreText}</span></div>
-                    <div class="btn-group" id="scoreGroup">${scoreBtns}</div>
-                    <div class="btn-hint">1明显较差 → 5很强</div>
+                    <div class="control-label">⭐ 评分 (1~5)</div>
+                    ${scoreGroupHtml}
                 </div>
-                
                 <div class="control-group">
-                    <div class="control-label">🔍 置信度 · 证据等级 <span style="font-weight:normal;">当前：${selectedEvidenceText}</span></div>
-                    <div class="btn-group" id="confGroup">${confBtns}</div>
-                    <div class="evidence-hint" id="evidenceHint">💡 ${selectedConf ? evidenceMap[selectedConf] : '点击上方数字选择证据强度'}</div>
+                    <div class="control-label">🔍 置信度 · 证据等级</div>
+                    ${confGroupHtml}
                 </div>
             </div>
         `;
         quizContent.innerHTML = html;
-        
+
         // 绑定评分按钮事件
-        document.querySelectorAll('#scoreGroup .score-btn').forEach(btn => {
+        document.querySelectorAll('.option-btn[data-type="score"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
-                if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: null };
+                if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: 3 };
                 answers[currentIndex].score = val;
-                // 刷新当前题的高亮 + 更新描述文字
                 updateCurrentQuestionUI();
             });
         });
-        // 置信度按钮事件
-        document.querySelectorAll('#confGroup .score-btn').forEach(btn => {
+        // 绑定置信度按钮事件
+        document.querySelectorAll('.option-btn[data-type="confidence"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
-                if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: null };
+                if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: 3 };
                 answers[currentIndex].confidence = val;
                 updateCurrentQuestionUI();
             });
         });
     }
-    
-    // 刷新当前题目UI (高亮 + 下方提示文字)
+
     function updateCurrentQuestionUI() {
-        const answer = answers[currentIndex];
-        const selectedScore = answer?.score;
-        const selectedConf = answer?.confidence;
+        const ans = answers[currentIndex];
+        const selectedScore = ans?.score;
+        const selectedConf = ans?.confidence;
+
         // 更新评分按钮高亮
-        document.querySelectorAll('#scoreGroup .score-btn').forEach(btn => {
-            const val = parseInt(btn.getAttribute('data-val'),10);
+        document.querySelectorAll('.option-btn[data-type="score"]').forEach(btn => {
+            const val = parseInt(btn.getAttribute('data-val'), 10);
             if (val === selectedScore) btn.classList.add('active');
             else btn.classList.remove('active');
         });
         // 更新置信度按钮高亮
-        document.querySelectorAll('#confGroup .score-btn').forEach(btn => {
-            const val = parseInt(btn.getAttribute('data-val'),10);
+        document.querySelectorAll('.option-btn[data-type="confidence"]').forEach(btn => {
+            const val = parseInt(btn.getAttribute('data-val'), 10);
             if (val === selectedConf) btn.classList.add('active');
             else btn.classList.remove('active');
         });
-        // 更新评分描述文字
-        const scoreHintMap = {1:'明显较差',2:'偏弱',3:'一般',4:'较强',5:'很强'};
-        const evidenceMap = {
-            1:'纯属猜测 / 没有证据',
-            2:'少量间接证据（听朋友说过一次）',
-            3:'有一定直接证据（分手前了解，或分手后可靠信源）',
-            4:'比较确定（公开数据/近期实际成果可见）',
-            5:'非常确定（确凿证据且持续验证）'
-        };
-        const scoreLabel = document.querySelector('.control-group:first-child .control-label span');
-        if (scoreLabel) scoreLabel.innerText = `当前：${selectedScore ? scoreHintMap[selectedScore] : '未选择'}`;
-        const confLabel = document.querySelector('.control-group:last-child .control-label span');
-        if (confLabel) confLabel.innerText = `当前：${selectedConf ? evidenceMap[selectedConf] : '未选择'}`;
-        const hintDiv = document.getElementById('evidenceHint');
-        if (hintDiv) hintDiv.innerHTML = `💡 ${selectedConf ? evidenceMap[selectedConf] : '点击上方数字选择证据强度'}`;
     }
-    
-    // 检查当前题目是否已选评分和置信度
+
     function isCurrentComplete() {
         const ans = answers[currentIndex];
-        return ans && ans.score !== null && ans.confidence !== null;
+        return ans && ans.score !== null;  // 置信度默认有值，只需检查评分
     }
-    
-    // 下一题逻辑
+
     function goToNext() {
         if (!isCurrentComplete()) {
-            alert('请先为本道题选择「评分」和「置信度」（证据等级）');
+            alert('请先为本道题选择「评分」');
             return;
         }
         if (currentIndex + 1 < TOTAL_QS) {
@@ -521,48 +493,40 @@
             updateProgress();
             renderCurrentQuestion();
         } else {
-            // 已经是最后一题, 完成评估生成结果
             if (!isCurrentComplete()) return;
-            // 生成结果页 (不再允许返回问卷)
             finishAndShowResult();
         }
     }
-    
+
     function goToPrev() {
         if (currentIndex > 0) {
             currentIndex--;
             updateProgress();
             renderCurrentQuestion();
         } else {
-            // 第一题无法上一题
             alert('已是第一题');
         }
     }
-    
-    // 完成所有题目 -> 展示结果页 (永久切换)
+
     function finishAndShowResult() {
-        // 最终检查所有答案是否完整 (理论上每题都强制填写)
-        for (let i=0; i<TOTAL_QS; i++) {
-            if (!answers[i] || answers[i].score === null || answers[i].confidence === null) {
-                alert(`第${i+1}题答案不完整，请返回填写完整后再完成评估。`);
-                // 跳转到不完整的题目
+        // 最终完整性检查（评分必须全部填完，置信度默认都有）
+        for (let i = 0; i < TOTAL_QS; i++) {
+            if (!answers[i] || answers[i].score === null) {
+                alert(`第${i + 1}题评分未填写，请返回完成。`);
                 currentIndex = i;
                 updateProgress();
                 renderCurrentQuestion();
                 return;
             }
         }
-        // 生成结果并显示结果页，且之后不允许回到测试页（按钮也不再提供回到问卷的方法）
         buildResultAndDisplay();
         showPage('resultPage');
-        // 销毁问卷内数据导航，并且禁用从结果回到测试的任何可能
-        // 让"重新评估"按钮重置所有状态回到intro
     }
-    
-    // ======================= 计算模块得分 & 总分 =====================
+
+    // 计算模块得分
     function computeModuleScoresFromAnswers() {
         const moduleMap = { A: { sumWeighted: 0, sumConf: 0 }, B: { sumWeighted: 0, sumConf: 0 }, C: { sumWeighted: 0, sumConf: 0 }, D: { sumWeighted: 0, sumConf: 0 }, E: { sumWeighted: 0, sumConf: 0 }, F: { sumWeighted: 0, sumConf: 0 } };
-        for (let i=0; i<questionsData.length; i++) {
+        for (let i = 0; i < questionsData.length; i++) {
             const mod = questionsData[i].module;
             const ans = answers[i];
             const score = ans.score;
@@ -571,14 +535,14 @@
             moduleMap[mod].sumConf += conf;
         }
         const moduleScores = {};
-        for (let mod of ['A','B','C','D','E','F']) {
+        for (let mod of ['A', 'B', 'C', 'D', 'E', 'F']) {
             const sumW = moduleMap[mod].sumWeighted;
             const sumC = moduleMap[mod].sumConf;
             moduleScores[mod] = sumC === 0 ? 3 : (sumW / sumC);
         }
         return moduleScores;
     }
-    
+
     function computeTotalAndConfidence() {
         const moduleScores = computeModuleScoresFromAnswers();
         let total = 0;
@@ -589,34 +553,31 @@
         total += moduleScores.E * moduleWeights.E;
         total += moduleScores.F * moduleWeights.F;
         let sumConf = 0;
-        for (let i=0; i<answers.length; i++) sumConf += answers[i].confidence;
+        for (let i = 0; i < answers.length; i++) sumConf += answers[i].confidence;
         const avgConfidence = sumConf / answers.length;
         return { totalScore: total, avgConfidence };
     }
-    
+
     function getInterpretation(score) {
         if (score >= 4.2) return "🚀 高概率跃迁 · 财富阶层突破潜力极强";
         if (score >= 3.5) return "📈 有明显潜力 · 未来3-5年大概率上台阶";
         if (score >= 2.8) return "⚖️ 不确定 · 存在变量，需关键事件触发";
         return "⚠️ 跃迁阻力较大 · 需底层能力重构";
     }
-    
-    // 渲染结果页面（包含雷达图、模块分等）
+
     function buildResultAndDisplay() {
         const { totalScore, avgConfidence } = computeTotalAndConfidence();
         const moduleScores = computeModuleScoresFromAnswers();
         const interpretText = getInterpretation(totalScore);
-        
-        // 雷达图数据
+
         const radarLabels = ['人力资本 A', '认知决策 B', '执行力 C', '外部环境 D', '社会资本 E', '关系影响 F'];
         const radarData = [moduleScores.A, moduleScores.B, moduleScores.C, moduleScores.D, moduleScores.E, moduleScores.F];
-        
-        // 模块列表html
+
         let moduleRowsHtml = '';
-        for (let mod of ['A','B','C','D','E','F']) {
+        for (let mod of ['A', 'B', 'C', 'D', 'E', 'F']) {
             moduleRowsHtml += `<div class="module-row"><span><strong>${moduleNames[mod]}</strong> (${mod})</span><span>${moduleScores[mod].toFixed(2)} / 5</span></div>`;
         }
-        
+
         const resultHtml = `
             <div class="result-score-card">
                 <div class="big-score">${totalScore.toFixed(2)}</div>
@@ -634,8 +595,7 @@
             <div style="font-size:0.75rem; color:#6c86a0; text-align:center; margin-top:12px;">※ 模块得分 = Σ(评分×置信度)/Σ置信度，总分按权重加总</div>
         `;
         document.getElementById('resultContent').innerHTML = resultHtml;
-        
-        // 绘制雷达图 (如果已有实例先销毁)
+
         const canvas = document.getElementById('resultRadarCanvas');
         if (canvas) {
             if (radarChartInstance) radarChartInstance.destroy();
@@ -664,43 +624,32 @@
             });
         }
     }
-    
-    // 完全重置所有状态 (回到说明页)
+
     function fullReset() {
-        answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: null }));
+        answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
         currentIndex = 0;
         if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
         showPage('introPage');
-        // 重置进度相关显示将在下次进入测试时重新渲染
     }
-    
-    // 开始评估 (初始化测试页)
+
     function initQuiz() {
-        // 确保答案数组全新或保留已有 (已经重置)
-        if (answers.some(a => a.score !== null)) {
-            // 如果答案已有内容但用户重新开始, 重置之
-            answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: null }));
-        }
+        // 确保答案结构正确（若已有部分残留，重新初始化）
+        answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
         currentIndex = 0;
         updateProgress();
         renderCurrentQuestion();
         showPage('quizPage');
     }
-    
+
     // 事件绑定
     startBtn.addEventListener('click', () => {
-        fullReset();        // 确保清空之前残留，重新开始
+        fullReset();
         initQuiz();
     });
     prevBtn.addEventListener('click', goToPrev);
     nextBtn.addEventListener('click', goToNext);
-    
-    document.getElementById('restartFromResultBtn').addEventListener('click', () => {
-        fullReset();
-        // 重新展示说明页
-    });
-    
-    // 初始化显示说明页
+
+    // 初始显示说明页
     showPage('introPage');
     totalQCountSpan.innerText = `/${TOTAL_QS}`;
 </script>

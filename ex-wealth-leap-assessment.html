@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>前任财富跃迁概率评估 | 就业版·雷达图测评</title>
+    <!-- Chart.js 轻量图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f4fa 0%, #e6edf4 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 30px 20px;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部 */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f4870, #2b6c9e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            color: #4a627a;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .badge-note {
+            background: #ffffffcc;
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 6px 14px;
+            display: inline-block;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* 两列布局：左侧问卷，右侧结果+雷达图 */
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+        }
+
+        .questions-panel {
+            flex: 2;
+            min-width: 280px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            padding: 20px 24px;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .result-panel {
+            flex: 1.2;
+            min-width: 280px;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+            padding: 24px 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            backdrop-filter: blur(0px);
+            border: 1px solid #eef2f8;
+        }
+
+        /* 模块卡片 */
+        .module-card {
+            background: #ffffffdd;
+            border-radius: 28px;
+            margin-bottom: 28px;
+            padding: 16px 20px 20px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #eef2f8;
+            transition: all 0.1s ease;
+        }
+
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-left: 6px solid;
+            padding-left: 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .module-title .weight {
+            font-size: 0.75rem;
+            background: #eef2fa;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #2c6280;
+        }
+        .module-A { border-left-color: #3b82f6; }
+        .module-B { border-left-color: #8b5cf6; }
+        .module-C { border-left-color: #10b981; }
+        .module-D { border-left-color: #f59e0b; }
+        .module-E { border-left-color: #ec489a; }
+        .module-F { border-left-color: #ef4444; }
+
+        /* 单个问题卡片 */
+        .question-item {
+            background: #f9fbfe;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            transition: all 0.1s;
+            border: 1px solid #eef2fa;
+        }
+        .q-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: #1e2f3f;
+            line-height: 1.35;
+        }
+        .q-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 140px;
+        }
+        .control-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b6f86;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .score-btn {
+            background: #ffffff;
+            border: 1px solid #ccdae9;
+            border-radius: 40px;
+            width: 44px;
+            height: 44px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #1e3a5f;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.02);
+        }
+        .score-btn.active {
+            background: #1f6e8c;
+            border-color: #1f6e8c;
+            color: white;
+            box-shadow: 0 4px 8px rgba(31,110,140,0.2);
+        }
+        .score-btn:hover {
+            background: #e2eaf3;
+            transform: scale(0.96);
+        }
+        .confidence-btn.active {
+            background: #2c5f8a;
+            border-color: #2c5f8a;
+            color: white;
+        }
+        .value-hint {
+            font-size: 0.7rem;
+            color: #4b6e8a;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+
+        /* 结果面板样式 */
+        .result-score {
+            text-align: center;
+            background: linear-gradient(120deg, #f0f9ff, #e9f0f9);
+            border-radius: 32px;
+            padding: 20px 12px;
+            margin-bottom: 24px;
+        }
+        .big-score {
+            font-size: 3.4rem;
+            font-weight: 800;
+            color: #1f4e6e;
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 0.85rem;
+            color: #4a627a;
+            margin-top: 6px;
+        }
+        .confidence-tag {
+            background: #eef2ff;
+            border-radius: 60px;
+            padding: 8px 12px;
+            display: inline-block;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+        .interpret {
+            background: #fef6e0;
+            padding: 14px;
+            border-radius: 24px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 500;
+            border-left: 5px solid #f7b32b;
+        }
+        .radar-container {
+            margin: 20px 0;
+        }
+        .module-scores-list {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+        .module-score-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .reset-btn {
+            background: #fff0e0;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            margin-top: 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.9rem;
+            color: #b45309;
+        }
+        .reset-btn:hover {
+            background: #ffe0c4;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #6c86a0;
+        }
+        @media (max-width: 800px) {
+            .btn-group { gap: 4px; }
+            .score-btn { width: 38px; height: 38px; font-size: 0.9rem; }
+            .questions-panel { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>💔 前任财富跃迁概率评估 · 就业版</h1>
+        <p>未来3-5年潜力扫描 | 客观理性 · 每题填写「评分+置信度」</p>
+        <div class="badge-note">⭐ 评分1~5 (弱→强) &nbsp;|&nbsp; 🔍 置信度1~5 (不确定→非常确定)</div>
+    </div>
+
+    <div class="dashboard">
+        <!-- 左侧问卷区 (动态渲染) -->
+        <div class="questions-panel" id="questionsPanel"></div>
+
+        <!-- 右侧结果区 -->
+        <div class="result-panel">
+            <div class="result-score">
+                <div class="big-score" id="totalScoreDisplay">--</div>
+                <div class="score-label">📊 财富潜力评分 (总分 / 5)</div>
+                <div class="confidence-tag" id="confidenceDisplay">📌 评估置信度: -- / 5</div>
+            </div>
+            <div id="interpretText" class="interpret">✨ 完成问卷后显示潜力区间</div>
+
+            <div class="radar-container">
+                <canvas id="radarChart" width="400" height="400" style="width:100%; max-width:400px; margin:0 auto; display:block;"></canvas>
+            </div>
+
+            <div class="module-scores-list" id="moduleScoresList">
+                <!-- 动态展示各模块原始得分 -->
+                <div style="font-weight:600; margin-bottom:8px;">📐 六大维度得分</div>
+                <div id="moduleScoreRows"></div>
+            </div>
+            <button id="resetAllBtn" class="reset-btn">⟳ 重置所有选项 (默认中值3分)</button>
+            <div style="font-size:0.7rem; margin-top:12px; text-align:center; color:#8a9bb0;">※ 模块得分 = Σ(评分×置信度)/Σ置信度<br>总分 = 加权平均 (人力30% | 认知20% | 执行25% | 外部10% | 社会10% | 关系5%)</div>
+        </div>
+    </div>
+    <footer>基于前任真实画像 · 理性回顾 | 所有数据本地计算，不留存</footer>
+</div>
+
+<script>
+    // ---------- 定义问题库 (21题) ----------
+    const questionsData = [
+        // A 人力资本 (3题)
+        { id: 1, module: "A", text: "技能稀缺性：核心能力在市场上难以替代？(议价能力/难招程度)", weightGroup: "A" },
+        { id: 2, module: "A", text: "学习与迭代能力：过去1-2年持续主动提升能力并发生明显变化", weightGroup: "A" },
+        { id: 3, module: "A", text: "收入增长趋势：过去3年收入是否呈现加速或跃迁趋势", weightGroup: "A" },
+        // B 认知与决策 (4题)
+        { id: 4, module: "B", text: "风险决策能力：面对高收益不确定机会，理性承担风险", weightGroup: "B" },
+        { id: 5, module: "B", text: "决策方式：重要决策基于逻辑/方法论，而非情绪", weightGroup: "B" },
+        { id: 6, module: "B", text: "长期规划能力：清晰的3年以上规划并持续执行", weightGroup: "B" },
+        { id: 7, module: "B", text: "财务知识与金钱心态：复利/资产配置，视金钱为工具而非压力", weightGroup: "B" },
+        // C 执行力 (7题)
+        { id: 8, module: "C", text: "时间使用结构：主要投入高价值(成长/事业)活动", weightGroup: "C" },
+        { id: 9, module: "C", text: "延迟满足能力：为了长期收益放弃短期享受", weightGroup: "C" },
+        { id: 10, module: "C", text: "抗压能力：压力/失败下保持稳定甚至更高输出", weightGroup: "C" },
+        { id: 11, module: "C", text: "机会识别能力：是否能识别重要机会", weightGroup: "C" },
+        { id: 12, module: "C", text: "行动速度：机会出现时快速行动", weightGroup: "C" },
+        { id: 13, module: "C", text: "储蓄与投资习惯：稳定储蓄率，将收入转化为资产(稳定盈利记录)", weightGroup: "C" },
+        { id: 14, module: "C", text: "杠杆与规模化倾向：使用/计划使用杠杆(创业/股权/副业)放大成果", weightGroup: "C" },
+        // D 外部环境 (2题)
+        { id: 15, module: "D", text: "行业前景：所在行业未来3-5年具备增长空间", weightGroup: "D" },
+        { id: 16, module: "D", text: "平台资源：所处平台/位置能够放大能力", weightGroup: "D" },
+        // E 社会资本 (2题)
+        { id: 17, module: "E", text: "人脉质量：人脉带来实际机会或资源", weightGroup: "E" },
+        { id: 18, module: "E", text: "关键支持(贵人)：关键时刻有人产生实质性帮助", weightGroup: "E" },
+        // F 关系影响 (3题)
+        { id: 19, module: "F", text: "关系中的状态：在你们关系中他是被消耗还是被促进", weightGroup: "F" },
+        { id: 20, module: "F", text: "分手后的状态变化：分手后专注度/效率/状态变化", weightGroup: "F" },
+        { id: 21, module: "F", text: "精力再分配：分手后将更多精力投入事业或成长", weightGroup: "F" }
+    ];
+
+    // 每个问题存储 { score: 1-5, confidence: 1-5 }
+    let userAnswers = [];
+    // 权重配置
+    const moduleWeights = { A: 0.30, B: 0.20, C: 0.25, D: 0.10, E: 0.10, F: 0.05 };
+
+    // 初始化答案 (默认均为3分)
+    function initAnswers() {
+        userAnswers = questionsData.map(() => ({ score: 3, confidence: 3 }));
+    }
+
+    // 计算模块得分 (加权平均：Σ(score*confidence)/Σconfidence)
+    function computeModuleScores() {
+        const moduleMap = { A: { sumWeighted: 0, sumConf: 0 }, B: { sumWeighted: 0, sumConf: 0 }, C: { sumWeighted: 0, sumConf: 0 }, D: { sumWeighted: 0, sumConf: 0 }, E: { sumWeighted: 0, sumConf: 0 }, F: { sumWeighted: 0, sumConf: 0 } };
+        for (let i = 0; i < questionsData.length; i++) {
+            const mod = questionsData[i].module;
+            const ans = userAnswers[i];
+            const score = ans.score;
+            const conf = ans.confidence;
+            moduleMap[mod].sumWeighted += score * conf;
+            moduleMap[mod].sumConf += conf;
+        }
+        const moduleScores = {};
+        for (let mod of ['A','B','C','D','E','F']) {
+            const sumW = moduleMap[mod].sumWeighted;
+            const sumC = moduleMap[mod].sumConf;
+            moduleScores[mod] = sumC === 0 ? 3 : (sumW / sumC);
+        }
+        return moduleScores;
+    }
+
+    // 计算总分 & 总体置信度
+    function computeTotalAndConfidence() {
+        const moduleScores = computeModuleScores();
+        let total = 0;
+        total += moduleScores.A * moduleWeights.A;
+        total += moduleScores.B * moduleWeights.B;
+        total += moduleScores.C * moduleWeights.C;
+        total += moduleScores.D * moduleWeights.D;
+        total += moduleScores.E * moduleWeights.E;
+        total += moduleScores.F * moduleWeights.F;
+        // 总体置信度：所有置信度的平均值
+        let sumConf = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            sumConf += userAnswers[i].confidence;
+        }
+        const avgConfidence = sumConf / userAnswers.length;
+        return { totalScore: total, avgConfidence: avgConfidence };
+    }
+
+    // 根据总分获得解释文本
+    function getInterpretation(score) {
+        if (score >= 4.2) return "🚀 高概率跃迁 · 财富阶层突破潜力极强";
+        if (score >= 3.5) return "📈 有明显潜力 · 未来3-5年大概率上台阶";
+        if (score >= 2.8) return "⚖️ 不确定 · 存在变量，需关键事件触发";
+        return "⚠️ 跃迁阻力较大 · 需底层能力重构";
+    }
+
+    // 全局雷达图实例
+    let radarChartInstance = null;
+
+    // 更新UI：总分、置信度、雷达图、模块列表、解释文本
+    function updateAllUI() {
+        const { totalScore, avgConfidence } = computeTotalAndConfidence();
+        const moduleScores = computeModuleScores();
+
+        // 显示总分/置信度
+        document.getElementById('totalScoreDisplay').innerText = totalScore.toFixed(2);
+        document.getElementById('confidenceDisplay').innerHTML = `📌 评估置信度: ${avgConfidence.toFixed(2)} / 5`;
+        const interp = getInterpretation(totalScore);
+        document.getElementById('interpretText').innerHTML = `✨ ${interp}`;
+
+        // 更新模块得分列表
+        const moduleNames = { A: '人力资本', B: '认知与决策', C: '执行力', D: '外部环境', E: '社会资本', F: '关系影响' };
+        const rowsHtml = [];
+        for (let mod of ['A','B','C','D','E','F']) {
+            let scoreVal = moduleScores[mod].toFixed(2);
+            rowsHtml.push(`<div class="module-score-row"><span><strong>${moduleNames[mod]}</strong> (${mod})</span><span>${scoreVal} / 5</span></div>`);
+        }
+        document.getElementById('moduleScoreRows').innerHTML = rowsHtml.join('');
+
+        // 更新雷达图 (六维)
+        const radarData = [moduleScores.A, moduleScores.B, moduleScores.C, moduleScores.D, moduleScores.E, moduleScores.F];
+        const labels = ['人力资本 A', '认知决策 B', '执行力 C', '外部环境 D', '社会资本 E', '关系影响 F'];
+        if (radarChartInstance) {
+            radarChartInstance.data.datasets[0].data = radarData;
+            radarChartInstance.update();
+        } else {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '前任模块得分',
+                        data: radarData,
+                        backgroundColor: 'rgba(59,130,246,0.2)',
+                        borderColor: '#1f6e8c',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#2c5f8a',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: { stepSize: 1, backdropColor: 'transparent' },
+                            grid: { color: '#cddfe7' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(2)} 分` } },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+    }
+
+    // 重置所有分数/置信度到3
+    function resetAll() {
+        for (let i = 0; i < userAnswers.length; i++) {
+            userAnswers[i].score = 3;
+            userAnswers[i].confidence = 3;
+        }
+        // 重新渲染所有按钮高亮状态
+        reRenderButtonsHighlight();
+        updateAllUI();
+    }
+
+    // 高亮刷新所有按钮样式 (根据userAnswers当前值)
+    function reRenderButtonsHighlight() {
+        // 遍历所有评分按钮组和置信度按钮组，设置active类
+        for (let i = 0; i < questionsData.length; i++) {
+            const currentScore = userAnswers[i].score;
+            const currentConf = userAnswers[i].confidence;
+            // 评分按钮组
+            const scoreGroup = document.querySelectorAll(`.score-group-${i} .score-btn`);
+            scoreGroup.forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-value'), 10);
+                if (val === currentScore) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            // 置信度按钮组
+            const confGroup = document.querySelectorAll(`.conf-group-${i} .score-btn`);
+            confGroup.forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-value'), 10);
+                if (val === currentConf) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+    }
+
+    // 动态渲染整个问卷 (模块化分组)
+    function renderQuestions() {
+        const container = document.getElementById('questionsPanel');
+        if (!container) return;
+        // 按模块分组数据
+        const groups = { A: [], B: [], C: [], D: [], E: [], F: [] };
+        questionsData.forEach((q, idx) => {
+            groups[q.module].push({ ...q, originalIndex: idx });
+        });
+        const moduleTitles = {
+            A: { name: '人力资本', weight: '30%', color: 'module-A' },
+            B: { name: '认知与决策', weight: '20%', color: 'module-B' },
+            C: { name: '执行力', weight: '25%', color: 'module-C' },
+            D: { name: '外部环境', weight: '10%', color: 'module-D' },
+            E: { name: '社会资本', weight: '10%', color: 'module-E' },
+            F: { name: '关系影响', weight: '5%', color: 'module-F' }
+        };
+        let html = '';
+        for (let mod of ['A','B','C','D','E','F']) {
+            const questionsInMod = groups[mod];
+            if (!questionsInMod.length) continue;
+            const titleInfo = moduleTitles[mod];
+            html += `<div class="module-card ${titleInfo.color}">
+                        <div class="module-title">
+                            <span>【${mod}】${titleInfo.name}</span>
+                            <span class="weight">权重 ${titleInfo.weight}</span>
+                        </div>`;
+            for (let q of questionsInMod) {
+                const idx = q.originalIndex;
+                const questionNumber = idx+1;
+                html += `<div class="question-item" data-qidx="${idx}">
+                            <div class="q-text">${questionNumber}. ${q.text}</div>
+                            <div class="q-controls">
+                                <div class="control-group">
+                                    <div class="control-label">⭐ 评分 (1~5)</div>
+                                    <div class="btn-group score-group-${idx}">`;
+                for (let s=1; s<=5; s++) {
+                    const activeClass = (userAnswers[idx].score === s) ? 'active' : '';
+                    html += `<button type="button" class="score-btn ${activeClass}" data-type="score" data-qidx="${idx}" data-value="${s}">${s}</button>`;
+                }
+                html += `</div><div class="value-hint">1明显较差 → 5很强</div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="control-label">🔍 置信度 (1~5)</div>
+                                    <div class="btn-group conf-group-${idx}">`;
+                for (let c=1; c<=5; c++) {
+                    const activeClass = (userAnswers[idx].confidence === c) ? 'active' : '';
+                    html += `<button type="button" class="score-btn ${activeClass}" data-type="confidence" data-qidx="${idx}" data-value="${c}">${c}</button>`;
+                }
+                html += `</div><div class="value-hint">1不确定 → 5非常确定</div>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+            html += `</div>`;
+        }
+        container.innerHTML = html;
+
+        // 绑定所有按钮事件 (委托)
+        container.querySelectorAll('.score-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const type = btn.getAttribute('data-type');
+                const qidx = parseInt(btn.getAttribute('data-qidx'), 10);
+                const value = parseInt(btn.getAttribute('data-value'), 10);
+                if (isNaN(qidx)) return;
+                if (type === 'score') {
+                    if (userAnswers[qidx].score !== value) {
+                        userAnswers[qidx].score = value;
+                    }
+                } else if (type === 'confidence') {
+                    if (userAnswers[qidx].confidence !== value) {
+                        userAnswers[qidx].confidence = value;
+                    }
+                }
+                // 刷新按钮高亮 + 整体计算更新
+                reRenderButtonsHighlight();
+                updateAllUI();
+            });
+        });
+    }
+
+    // 重置监听器
+    function bindReset() {
+        const resetBtn = document.getElementById('resetAllBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                resetAll();
+            });
+        }
+    }
+
+    // 初始化全部
+    function init() {
+        initAnswers();
+        renderQuestions();
+        updateAllUI();
+        bindReset();
+    }
+
+    init();
+</script>
+</body>
+</html>

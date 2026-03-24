@@ -288,12 +288,12 @@
 <div class="app-container" id="appRoot">
     <!-- 说明页 -->
     <div id="introPage" class="page card">
-        <h1>💔 分手后，他的身价会涨吗？<br><span style="font-size: 1rem;">——基于风控模型的潜力评估（就业版）</span></h1>
+        <h1>💔 分手后，TA的身价会涨吗？<br><span style="font-size: 1rem;">——基于风控模型的潜力评估（就业版）</span></h1>
         <div class="sub">前任财富跃迁概率评估 · 证据导向型问卷</div>
         <div style="background: #f4f9fe; border-radius: 28px; padding: 20px; margin: 16px 0;">
             <p style="font-weight: 600; margin-bottom: 12px;">📌 填写前必读</p>
-            <p style="margin-bottom: 12px; font-size: 0.9rem;">1️⃣ 请尽量基于<strong>客观事实</strong>（如他实际跳槽的薪资涨幅、考取的证书、可验证的投资记录），而非分手后的情绪推测。</p>
-            <p style="margin-bottom: 8px; font-size: 0.9rem;">2️⃣ 分手后，你对他的“决策方式”“时间使用结构”的了解可能已经过时。很多人分手后会像变了一个人。<br>⚠️ 本问卷结果，反映的可能是“你记忆中的他”或“你想象中的他”，而非真实当下的他。请理性对待。</p>
+            <p style="margin-bottom: 12px; font-size: 0.9rem;">1️⃣ 请尽量基于<strong>客观事实</strong>（如TA实际跳槽的薪资涨幅、考取的证书、可验证的投资记录），而非分手后的情绪推测。</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;">2️⃣ 分手后，你对TA的“决策方式”“时间使用结构”的了解可能已经过时。很多人分手后会像变了一个人。<br>⚠️ 本问卷结果，反映的可能是“你记忆中的TA”或“你想象中的TA”，而非真实当下的TA。请理性对待。</p>
         </div>
         <button class="btn-primary" id="startBtn">开始评估 → 逐题作答</button>
         <footer>21个维度 | 每题需选评分+置信度</footer>
@@ -323,35 +323,35 @@
 </div>
 
 <script>
-    // ----------------------------- 题库数据（完全基于原版21题）--------------------------------
+    // ----------------------------- 题库数据（所有“他”替换为“TA”）--------------------------------
     const questionsData = [
         // A 人力资本 (3)
-        { id: 1, module: "A", text: "技能稀缺性：他当前的核心能力，在市场上难以替代？（难招程度/议价能力）", weightGroup: "A" },
-        { id: 2, module: "A", text: "学习与迭代能力：过去1–2年，他是否持续主动提升能力并发生明显变化？", weightGroup: "A" },
-        { id: 3, module: "A", text: "收入增长趋势：过去3年，他的收入是否呈现加速或跃迁趋势？", weightGroup: "A" },
+        { id: 1, module: "A", text: "技能稀缺性：TA当前的核心能力，在市场上难以替代？（难招程度/议价能力）", weightGroup: "A" },
+        { id: 2, module: "A", text: "学习与迭代能力：过去1–2年，TA是否持续主动提升能力并发生明显变化？", weightGroup: "A" },
+        { id: 3, module: "A", text: "收入增长趋势：过去3年，TA的收入是否呈现加速或跃迁趋势？", weightGroup: "A" },
         // B 认知与决策 (4)
-        { id: 4, module: "B", text: "风险决策能力：面对高收益但不确定的机会，他是否愿意理性承担风险？", weightGroup: "B" },
-        { id: 5, module: "B", text: "决策方式：他做重要决策时，是否基于逻辑、信息或方法论，而非情绪？", weightGroup: "B" },
-        { id: 6, module: "B", text: "长期规划能力：他是否有清晰的3年以上规划，并持续执行？", weightGroup: "B" },
+        { id: 4, module: "B", text: "风险决策能力：面对高收益但不确定的机会，TA是否愿意理性承担风险？", weightGroup: "B" },
+        { id: 5, module: "B", text: "决策方式：TA做重要决策时，是否基于逻辑、信息或方法论，而非情绪？", weightGroup: "B" },
+        { id: 6, module: "B", text: "长期规划能力：TA是否有清晰的3年以上规划，并持续执行？", weightGroup: "B" },
         { id: 7, module: "B", text: "财务知识与金钱心态：具备财务素养（复利/风险配置），将金钱视为工具而非压力或炫耀？", weightGroup: "B" },
         // C 执行力 (7)
-        { id: 8, module: "C", text: "时间使用结构：他的时间是否主要投入在高价值（成长/事业）活动上？", weightGroup: "C" },
-        { id: 9, module: "C", text: "延迟满足能力：他是否能为了长期收益放弃短期享受？", weightGroup: "C" },
-        { id: 10, module: "C", text: "抗压能力：在压力或失败下，他是否仍能保持稳定甚至更高输出？", weightGroup: "C" },
-        { id: 11, module: "C", text: "机会识别能力：他是否能识别重要机会？", weightGroup: "C" },
-        { id: 12, module: "C", text: "行动速度：当机会出现时，他是否能快速行动？", weightGroup: "C" },
+        { id: 8, module: "C", text: "时间使用结构：TA的时间是否主要投入在高价值（成长/事业）活动上？", weightGroup: "C" },
+        { id: 9, module: "C", text: "延迟满足能力：TA是否能为了长期收益放弃短期享受？", weightGroup: "C" },
+        { id: 10, module: "C", text: "抗压能力：在压力或失败下，TA是否仍能保持稳定甚至更高输出？", weightGroup: "C" },
+        { id: 11, module: "C", text: "机会识别能力：TA是否能识别重要机会？", weightGroup: "C" },
+        { id: 12, module: "C", text: "行动速度：当机会出现时，TA是否能快速行动？", weightGroup: "C" },
         { id: 13, module: "C", text: "储蓄与投资习惯：稳定储蓄率，并将收入转化为资产（有持续正回报/被动收入记录）", weightGroup: "C" },
         { id: 14, module: "C", text: "杠杆与规模化倾向：是否使用/计划使用杠杆（创业/股权/副业）放大成果？", weightGroup: "C" },
         // D 外部环境 (2)
-        { id: 15, module: "D", text: "行业前景：他所在行业未来3–5年是否具备增长空间？", weightGroup: "D" },
-        { id: 16, module: "D", text: "平台资源：他是否处于能够放大能力的平台（公司/位置/资源）？", weightGroup: "D" },
+        { id: 15, module: "D", text: "行业前景：TA所在行业未来3–5年是否具备增长空间？", weightGroup: "D" },
+        { id: 16, module: "D", text: "平台资源：TA是否处于能够放大能力的平台（公司/位置/资源）？", weightGroup: "D" },
         // E 社会资本 (2)
-        { id: 17, module: "E", text: "人脉质量：他的人脉是否能带来实际机会或资源？", weightGroup: "E" },
-        { id: 18, module: "E", text: "关键支持（贵人）：是否有人在关键时刻对他产生实质性帮助？", weightGroup: "E" },
+        { id: 17, module: "E", text: "人脉质量：TA的人脉是否能带来实际机会或资源？", weightGroup: "E" },
+        { id: 18, module: "E", text: "关键支持（贵人）：是否有人在关键时刻对TA产生实质性帮助？", weightGroup: "E" },
         // F 关系影响 (3)
-        { id: 19, module: "F", text: "关系中的状态：在你们关系中，他整体是被消耗还是被促进？", weightGroup: "F" },
-        { id: 20, module: "F", text: "分手后的状态变化：分手后，他在专注度、效率或状态上是否有变化？", weightGroup: "F" },
-        { id: 21, module: "F", text: "精力再分配：分手后，他是否将更多精力投入到事业或成长？", weightGroup: "F" }
+        { id: 19, module: "F", text: "关系中的状态：在你们关系中，TA整体是被消耗还是被促进？", weightGroup: "F" },
+        { id: 20, module: "F", text: "分手后的状态变化：分手后，TA在专注度、效率或状态上是否有变化？", weightGroup: "F" },
+        { id: 21, module: "F", text: "精力再分配：分手后，TA是否将更多精力投入到事业或成长？", weightGroup: "F" }
     ];
     const TOTAL_QS = questionsData.length;
     const moduleWeights = { A: 0.30, B: 0.20, C: 0.25, D: 0.10, E: 0.10, F: 0.05 };

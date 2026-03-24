@@ -254,6 +254,15 @@
             background: #fefefe;
             border-radius: 28px;
             padding: 12px;
+            text-align: center;
+        }
+
+        canvas#resultRadarCanvas {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
         }
 
         .module-list {
@@ -586,7 +595,7 @@
             </div>
             <div class="interpret-box">✨ ${interpretText}</div>
             <div class="radar-wrapper">
-                <canvas id="resultRadarCanvas" width="400" height="400" style="width:100%; max-width:350px; margin:0 auto; display:block;"></canvas>
+                <canvas id="resultRadarCanvas" width="400" height="400" style="width:100%; max-width:350px; height:auto; margin:0 auto; display:block;"></canvas>
             </div>
             <div class="module-list">
                 <div style="font-weight:700; margin-bottom:10px;">📐 六大维度加权得分</div>
@@ -596,33 +605,36 @@
         `;
         document.getElementById('resultContent').innerHTML = resultHtml;
 
-        const canvas = document.getElementById('resultRadarCanvas');
-        if (canvas) {
-            if (radarChartInstance) radarChartInstance.destroy();
-            const ctx = canvas.getContext('2d');
-            radarChartInstance = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: radarLabels,
-                    datasets: [{
-                        label: '前任模块得分',
-                        data: radarData,
-                        backgroundColor: 'rgba(31,110,140,0.2)',
-                        borderColor: '#1f6e8c',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#2c5f8a',
-                        pointRadius: 4,
-                        pointBorderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } },
-                    plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(2)} 分` } } }
-                }
-            });
-        }
+        // 确保 canvas 元素已渲染，稍后绘制雷达图
+        setTimeout(() => {
+            const canvas = document.getElementById('resultRadarCanvas');
+            if (canvas) {
+                if (radarChartInstance) radarChartInstance.destroy();
+                const ctx = canvas.getContext('2d');
+                radarChartInstance = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: radarLabels,
+                        datasets: [{
+                            label: '前任模块得分',
+                            data: radarData,
+                            backgroundColor: 'rgba(31,110,140,0.2)',
+                            borderColor: '#1f6e8c',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#2c5f8a',
+                            pointRadius: 4,
+                            pointBorderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } },
+                        plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(2)} 分` } } }
+                    }
+                });
+            }
+        }, 50);
     }
 
     function fullReset() {
@@ -633,7 +645,6 @@
     }
 
     function initQuiz() {
-        // 确保答案结构正确（若已有部分残留，重新初始化）
         answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
         currentIndex = 0;
         updateProgress();

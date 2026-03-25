@@ -455,7 +455,6 @@
     <!-- 结果页 -->
     <div id="resultPage" class="page card hidden">
         <div id="resultContent"></div>
-        <!-- 已移除底部提示文字 -->
     </div>
 </div>
 
@@ -500,7 +499,7 @@
     let answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
     let currentIndex = 0;
     let radarChartInstance = null;
-    let selectedIntent = null; // 将在最后选择
+    let selectedIntent = null;
 
     const introPage = document.getElementById('introPage');
     const quizPage = document.getElementById('quizPage');
@@ -578,7 +577,6 @@
                 updateCurrentQuestionUI();
                 // 自动跳转
                 if (currentIndex + 1 < TOTAL_QS) {
-                    // 不是最后一题，跳转到下一题
                     currentIndex++;
                     updateProgress();
                     renderCurrentQuestion();
@@ -641,13 +639,11 @@
             updateProgress();
             renderCurrentQuestion();
         } else {
-            // 最后一题，询问意图
             showIntentModal();
         }
     }
 
     function showIntentModal() {
-        // 创建模态框
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.innerHTML = `
@@ -661,7 +657,6 @@
             </div>
         `;
         document.body.appendChild(modal);
-        // 绑定按钮事件
         modal.querySelectorAll('.modal-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 selectedIntent = btn.getAttribute('data-intent');
@@ -672,7 +667,6 @@
     }
 
     function finishAndShowResult() {
-        // 检查所有答案完整性
         for (let i = 0; i < TOTAL_QS; i++) {
             if (!answers[i] || answers[i].score === null) {
                 alert(`第${i + 1}题评分未填写，请返回完成。`);
@@ -727,7 +721,6 @@
         return "⚠️ 跃迁阻力较大 · 需底层能力重构";
     }
 
-    // 新人群分布
     function getPopulationAndPortrait(score) {
         if (score >= 4.2) {
             return {
@@ -784,22 +777,41 @@
         return { module: minMod, name: moduleNames[minMod], score: minScore };
     }
 
-    function getAdviceByIntent(intent, totalScore, avgConfidence, lowestModule) {
+    // 根据意图和得分区间返回详细建议
+    function getAdviceByIntentAndScore(intent, totalScore, avgConfidence, lowestModule, moduleScores) {
+        const category = totalScore >= 4.2 ? 'high' : (totalScore >= 3.5 ? 'midHigh' : (totalScore >= 2.8 ? 'midLow' : 'low'));
+        
         if (intent === 'verify') {
-            return {
-                title: "🔍 求证型 · 心态建议",
-                content: `您选择“求证型”意图，可能想确认分手决策是否合理。\n当前TA的财富潜力评分为 ${totalScore.toFixed(2)} 分，属于${getPopulationAndPortrait(totalScore).label}。\n\n低分群体（<2.8分）典型特征：多个核心维度在2分以下，收入停滞、决策情绪化、无储蓄习惯。若您的评估结果属于该区间，说明TA的财富增长动能偏弱，分手可能是理性选择。\n\n若得分较高但您仍有疑虑，可结合“短板提示”中的${lowestModule.name}维度进一步思考。`
-            };
+            if (category === 'high') {
+                return `您的评估显示TA财富潜力极高，属于“黑马型”。若分手主要因财富因素，可能需要重新审视——这类人未来跃迁概率很大。但若分手因价值观、情感消耗等不可调和因素，则高潜力未必能弥补关系缺失。建议结合“关系影响”模块（F）的得分：若该模块<3分，分手仍可能是正确选择。`;
+            } else if (category === 'midHigh') {
+                return `TA属于“潜力型”，上限高但有明显短板。分手是否合理，取决于短板是否与您在意的核心品质冲突（如决策情绪化、财务观念不合）。若短板恰好是您无法接受的，分手具有合理性；若短板可改善且情感尚可，则存在遗憾。`;
+            } else if (category === 'midLow') {
+                return `TA处于“平稳型”，财富增长确定但缺乏爆发力。若您渴望进取型伴侣，分手可能是合理的；若您更看重稳定，则值得反思。建议关注您自己的长期目标是否与TA的节奏匹配。`;
+            } else {
+                return `TA属于“滞涨型”，多个核心维度偏弱。分手在财富层面是理性选择。若您还感到犹豫，可以回顾那些低分模块（如决策方式、储蓄习惯）是否曾让您疲惫——这些大概率不会突然改变。`;
+            }
         } else if (intent === 'curious') {
-            return {
-                title: "👀 好奇型 · 心态建议",
-                content: `您选择“好奇型”意图，可能想了解TA分手后的发展。\n请注意：本次评估置信度为 ${avgConfidence.toFixed(2)} 分。置信度低于3.0的维度（如评分低于3且置信度低），建议您核实后再下结论，因为分手后人的状态可能已发生变化。\n\n若想更准确判断，可以关注TA近期的公开动态（如职业晋升、创业项目等），再结合问卷中的低分项重新评估。`
-            };
-        } else {
-            return {
-                title: "🔄 复盘型 · 心态建议",
-                content: `您选择“复盘型”意图，可能想反思自己在关系中的筛选偏好。\n请回顾您的评分：哪些维度您给了低分？这些维度是否在您的前任中反复出现？\n\n例如，若多次在“决策方式”“财务知识”上给低分，可能说明您容易被情绪化或财务观念薄弱的人吸引。下次择偶时，可以优先观察对方的风险决策能力和金钱心态。\n\n本次评估的短板是“${lowestModule.name}”，建议思考这是否是您择偶时容易忽略的关键点。`
-            };
+            const lowConfWarning = avgConfidence < 3.0 ? `（注意：整体置信度${avgConfidence.toFixed(2)}较低，建议核实）` : '';
+            if (category === 'high') {
+                return `您评估TA是“黑马型”，若信息准确，TA很可能在分手后更加专注，事业进入快车道。${lowConfWarning}请留意置信度低于3.0的维度，分手后人的状态可能剧变，建议通过公开信息（如职场动态、社交状态）交叉验证。`;
+            } else if (category === 'midHigh') {
+                return `TA属于“潜力型”，上限高但受短板拖累。分手后如果短板被现实压力激活（如被迫学习财务、接触杠杆），可能加速成长；反之也可能原地踏步。${lowConfWarning}置信度<3的维度，建议您观望后再下结论。`;
+            } else if (category === 'midLow') {
+                return `TA大概率维持原状，收入稳定但缺少跃迁事件。若您听到TA突然成功，很可能是外部机会（如行业风口）而非个人突变。${lowConfWarning}置信度较低的维度（如“行动速度”）建议暂不采信。`;
+            } else {
+                return `TA的状况可能依然低迷，财富增长动能较弱。若您听说TA“突然变好”，请谨慎核实——结构性改变需要长期努力，短期反转概率极低。${lowConfWarning}`;
+            }
+        } else { // review
+            if (category === 'high') {
+                return `您似乎容易被高潜力、高成长性的人吸引，但这类人往往专注事业、关系投入较少。复盘您与TA的互动：是否因对方“事业优先”而感到被忽视？下次择偶可平衡“潜力”与“情感陪伴”的权重。`;
+            } else if (category === 'midHigh') {
+                return `您可能对“有潜力但有短板”的人有特别偏好。回顾一下，TA的短板（如缺杠杆意识、财务知识不足）是否也是您前任中常见的？如果是，说明您可能被“潜力光环”吸引而忽略底层风险。建议下次优先考察对方在短板维度的实际表现。`;
+            } else if (category === 'midLow') {
+                return `您似乎倾向于选择稳定、中规中矩的伴侣。这本身无对错，但若您内心渴望突破，这种组合容易让您感到“不上不下”。反思一下：您是否在关系中承担了更多“推动”角色？下次可明确自己更需要“同行者”还是“互补者”。`;
+            } else {
+                return `您可能不自觉地被某些特质吸引，而忽略了结构性风险（如决策情绪化、无储蓄习惯）。回顾低分模块，这些是否在您的前任中反复出现？若是，建议建立一份“必避清单”，在初期就筛选掉这些核心风险项。`;
+            }
         }
     }
 
@@ -809,7 +821,8 @@
         const interpretText = getInterpretation(totalScore);
         const population = getPopulationAndPortrait(totalScore);
         const lowest = findLowestModule(moduleScores);
-        const advice = getAdviceByIntent(selectedIntent, totalScore, avgConfidence, lowest);
+        const adviceText = getAdviceByIntentAndScore(selectedIntent, totalScore, avgConfidence, lowest, moduleScores);
+        const adviceTitle = selectedIntent === 'verify' ? '🔍 求证型 · 心态建议' : (selectedIntent === 'curious' ? '👀 好奇型 · 心态建议' : '🔄 复盘型 · 心态建议');
 
         const radarLabels = ['人力资本 A', '认知决策 B', '执行力 C', '外部环境 D', '社会资本 E', '关系影响 F'];
         const radarData = [moduleScores.A, moduleScores.B, moduleScores.C, moduleScores.D, moduleScores.E, moduleScores.F];
@@ -853,8 +866,8 @@
             </div>
             
             <div class="advice-card">
-                <h4>${advice.title}</h4>
-                <p>${advice.content}</p>
+                <h4>${adviceTitle}</h4>
+                <p>${adviceText}</p>
             </div>
             
             <div class="reassess-note">

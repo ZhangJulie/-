@@ -1,6 +1,7 @@
 // codes.js
-// 所有有效兑换码（共1000个，以A开头）
+// 所有有效兑换码（含A开头三段式和B开头连续12位）
 window.VALID_CODES = [
+    // ========== A 开头三段式兑换码（共约1000个）==========
     "A1B2-C3D4-E5F6",
     "A2C3-D4E5-F6G7",
     "A3D4-E5F6-G7H8",
@@ -1137,22 +1138,13 @@ window.USED_CODES = (function() {
     }
 })();
 
-// 验证兑换码（格式、是否存在、是否已使用）
+// 验证兑换码（支持两种格式：三段式 和 连续12位）
 function validateCode(code) {
-// 定义两种允许的格式
     const format1 = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/; // 三段式
     const format2 = /^[A-Z0-9]{12}$/;                           // 连续12位
 
     if (!format1.test(code) && !format2.test(code)) {
         return { valid: false, message: "无效的兑换码格式" };
-    }
-    if (!window.VALID_CODES.includes(code)) {
-        return { valid: false, message: "兑换码不存在" };
-    }
-    if (window.USED_CODES.includes(code)) {
-        return { valid: false, message: "该兑换码已使用过" };
-    }
-    return { valid: true, message: "验证通过" };
     }
     if (!window.VALID_CODES.includes(code)) {
         return { valid: false, message: "兑换码不存在" };

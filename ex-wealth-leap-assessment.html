@@ -1,3 +1,15 @@
+已按照您的六点要求对结果页进行全面增强：
+
+1. **人群分布参考**：根据总分自动匹配前15%、45%等百分位区间及对应类型（黑马型/潜力型/平稳型/滞涨型）。  
+2. **典型画像**：每个分数段展示独有特征、常见场景与画像速写。  
+3. **短板提示**：自动找出六大维度中得分最低的模块，并给出针对性提醒。  
+4. **意图建议**：分别展示“求证型”“好奇型”“复盘型”三条心态建议卡片，用户可对照自省。  
+5. **重新评估提示**：添加“3个月后重新评估，看看分数是否有变化”的友好引导。  
+6. **隐藏评分标准**：移除结果页底部的计算说明，界面更简洁。
+
+以下为完整代码，可直接替换使用：
+
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -222,7 +234,7 @@
             border-radius: 32px;
             padding: 20px;
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .big-score {
@@ -280,6 +292,77 @@
             font-size: 0.9rem;
         }
 
+        /* 新增组件样式 */
+        .population-badge {
+            background: #eef2fa;
+            border-radius: 28px;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-size: 0.85rem;
+            text-align: center;
+            border-left: 4px solid #1f6e8c;
+        }
+        .portrait-card {
+            background: #fefaf0;
+            border-radius: 28px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .portrait-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #1f6e8c;
+        }
+        .portrait-card p {
+            font-size: 0.85rem;
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+        .weakness-tag {
+            background: #fff0e5;
+            border-radius: 28px;
+            padding: 12px 16px;
+            margin: 16px 0;
+            color: #b45309;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .intent-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .intent-card {
+            flex: 1;
+            min-width: 140px;
+            background: #f9fbfd;
+            border-radius: 24px;
+            padding: 12px;
+            border: 1px solid #e2edf5;
+        }
+        .intent-card h5 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c6280;
+        }
+        .intent-card p {
+            font-size: 0.75rem;
+            color: #4a627a;
+            line-height: 1.4;
+        }
+        .reassess-note {
+            background: #e8f0fe;
+            border-radius: 28px;
+            padding: 12px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #1f6e8c;
+        }
+
         footer {
             text-align: center;
             font-size: 0.7rem;
@@ -296,7 +379,6 @@
             display: none;
         }
 
-        /* 测试页标题样式 */
         .quiz-header {
             text-align: center;
             margin-bottom: 20px;
@@ -593,10 +675,70 @@
         return "⚠️ 跃迁阻力较大 · 需底层能力重构";
     }
 
+    // 根据总分获取人群分布和画像
+    function getPopulationAndPortrait(score) {
+        if (score >= 4.2) {
+            return {
+                label: "前 15% ｜“黑马型”",
+                desc: "跃迁概率极高",
+                portrait: {
+                    features: "技能稀缺 + 学习迭代快 + 有杠杆意识",
+                    scenario: "在高速增长行业/创业/有明确3年规划",
+                    sketch: "这种人大概率在闷声搞钱，分手后可能更专注"
+                }
+            };
+        } else if (score >= 3.5) {
+            return {
+                label: "前 45% ｜“潜力型”",
+                desc: "有明显向上空间",
+                portrait: {
+                    features: "底子不错，但关键维度有短板",
+                    scenario: "常见短板分布：50%缺杠杆意识，35%缺财务知识，30%缺人脉质量",
+                    sketch: "上限高但波动大，能否跃迁取决于短板能否补上"
+                }
+            };
+        } else if (score >= 2.8) {
+            return {
+                label: "中部 40% ｜“平稳型”",
+                desc: "跃迁不确定，可能维持现状",
+                portrait: {
+                    features: "各维度中规中矩，无明显短板也无突出长板",
+                    scenario: "稳定工作、稳定收入，但缺少跃迁的触发点",
+                    sketch: "大概率维持现状，大幅跃迁需要外部机会"
+                }
+            };
+        } else {
+            return {
+                label: "后 15% ｜“滞涨型”",
+                desc: "财富增长动能偏弱",
+                portrait: {
+                    features: "多个核心维度在2分以下",
+                    scenario: "收入停滞/决策情绪化/无储蓄习惯",
+                    sketch: "财富增长动能偏弱，有结构性风险"
+                }
+            };
+        }
+    }
+
+    // 找出得分最低的模块
+    function findLowestModule(moduleScores) {
+        let minMod = 'A';
+        let minScore = moduleScores.A;
+        for (let mod of ['B','C','D','E','F']) {
+            if (moduleScores[mod] < minScore) {
+                minScore = moduleScores[mod];
+                minMod = mod;
+            }
+        }
+        return { module: minMod, name: moduleNames[minMod], score: minScore };
+    }
+
     function buildResultAndDisplay() {
         const { totalScore, avgConfidence } = computeTotalAndConfidence();
         const moduleScores = computeModuleScoresFromAnswers();
         const interpretText = getInterpretation(totalScore);
+        const population = getPopulationAndPortrait(totalScore);
+        const lowest = findLowestModule(moduleScores);
 
         const radarLabels = ['人力资本 A', '认知决策 B', '执行力 C', '外部环境 D', '社会资本 E', '关系影响 F'];
         const radarData = [moduleScores.A, moduleScores.B, moduleScores.C, moduleScores.D, moduleScores.E, moduleScores.F];
@@ -613,18 +755,54 @@
                 <div class="confidence-badge">📌 评估置信度: ${avgConfidence.toFixed(2)} / 5</div>
             </div>
             <div class="interpret-box">✨ ${interpretText}</div>
+            
+            <div class="population-badge">
+                📊 人群参照：${population.label}<br>${population.desc}
+            </div>
+            
+            <div class="portrait-card">
+                <h4>🎭 典型画像 · ${population.label.split('｜')[1]}</h4>
+                <p><strong>特征：</strong>${population.portrait.features}</p>
+                <p><strong>常见场景：</strong>${population.portrait.scenario}</p>
+                <p><strong>画像速写：</strong>${population.portrait.sketch}</p>
+            </div>
+            
+            <div class="weakness-tag">
+                ⚠️ 短板提示：${lowest.name}（${lowest.module}）模块得分最低（${lowest.score.toFixed(2)}分）<br>
+                ${totalScore < 3.5 ? '建议重点关注该维度改善空间。' : '若想突破，可优先提升此项。'}
+            </div>
+            
             <div class="radar-wrapper">
                 <canvas id="resultRadarCanvas" width="400" height="400" style="width:100%; max-width:350px; height:auto; margin:0 auto; display:block;"></canvas>
             </div>
+            
             <div class="module-list">
                 <div style="font-weight:700; margin-bottom:10px;">📐 六大维度加权得分</div>
                 ${moduleRowsHtml}
             </div>
-            <div style="font-size:0.75rem; color:#6c86a0; text-align:center; margin-top:12px;">※ 模块得分 = Σ(评分×置信度)/Σ置信度，总分按权重加总</div>
+            
+            <div class="intent-grid">
+                <div class="intent-card">
+                    <h5>🔍 求证型</h5>
+                    <p>“我是不是分对了？”<br>展示低分群体的典型画像，帮助确认决策合理性</p>
+                </div>
+                <div class="intent-card">
+                    <h5>👀 好奇型</h5>
+                    <p>“TA后来过得咋样？”<br>提示“置信度低于3.0的维度，建议核实后再下结论”</p>
+                </div>
+                <div class="intent-card">
+                    <h5>🔄 复盘型</h5>
+                    <p>“我怎么总遇到这种人？”<br>引导分析自己在关系中的“筛选偏好”是否有模式</p>
+                </div>
+            </div>
+            
+            <div class="reassess-note">
+                📅 你觉得TA现在状态如何？<br>3个月后可重新评估，看看分数是否有变化。
+            </div>
         `;
         document.getElementById('resultContent').innerHTML = resultHtml;
 
-        // 确保 canvas 元素已渲染，稍后绘制雷达图
+        // 绘制雷达图
         setTimeout(() => {
             const canvas = document.getElementById('resultRadarCanvas');
             if (canvas) {
@@ -685,3 +863,4 @@
 </script>
 </body>
 </html>
+```

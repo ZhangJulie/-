@@ -1,34 +1,37 @@
 // codes.js
-// 兑换码管理模块：从 codes.txt.txt 加载兑换码，支持三段式和连续12位格式
+window.VALID_CODES = [];
+window.USED_CODES = [];
 
-window.VALID_CODES = [];    // 存储有效兑换码
-window.USED_CODES = [];     // 已使用的兑换码（存储在 localStorage）
-
-// 加载兑换码文件（每行一个码）
+// 加载兑换码（支持重试和明确错误提示）
 async function loadCodes() {
+    const fileName = 'codes.txt';   // 请将您的文件重命名为 codes.txt
     try {
-        // 注意：您的文件名是 codes.txt.txt，所以这里请求该文件
-        const response = await fetch('codes.txt.txt');
+        const response = await fetch(fileName);
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}: 文件 ${fileName} 未找到，请确认文件名和路径`);
         }
         const text = await response.text();
-        // 按行分割，过滤空行和前后空白
         const lines = text.split(/\r?\n/);
         window.VALID_CODES = lines
-            .map(line => line.trim().toUpperCase())   // 统一转大写
+            .map(line => line.trim().toUpperCase())
             .filter(line => line.length > 0);
         
-        console.log(`成功加载 ${window.VALID_CODES.length} 个兑换码`);
+        console.log(`✅ 成功加载 ${window.VALID_CODES.length} 个兑换码`);
+        if (window.VALID_CODES.length === 0) {
+            console.warn('⚠️ 兑换码文件为空，请检查文件内容');
+        }
         return true;
     } catch (error) {
-        console.error('加载兑换码文件失败:', error);
-        // 可在此显示错误提示
+        console.error('❌ 加载兑换码失败:', error.message);
+        // 在页面上显示错误，方便排查
+        const msg = document.createElement('div');
+        msg.style.cssText = 'position:fixed; top:10px; left:10px; background:red; color:white; padding:8px; z-index:9999;';
+        msg.innerText = `兑换码加载失败：${error.message}`;
+        document.body.appendChild(msg);
         return false;
     }
 }
 
-// 初始化已使用码列表（从 localStorage 读取）
 function initUsedCodes() {
     try {
         const stored = localStorage.getItem('USED_CODES');
@@ -38,16 +41,13 @@ function initUsedCodes() {
     }
 }
 
-// 验证兑换码（支持两种格式：三段式 或 连续12位）
 function validateCode(code) {
-    // 统一转大写
     const upperCode = code.toUpperCase();
-    // 格式校验
-    const format1 = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/; // 三段式
-    const format2 = /^[A-Z0-9]{12}$/;                           // 连续12位
+    const format1 = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+    const format2 = /^[A-Z0-9]{12}$/;
     
     if (!format1.test(upperCode) && !format2.test(upperCode)) {
-        return { valid: false, message: "无效的兑换码格式" };
+        return { valid: false, message: "无效的兑换码格式（需为 XXXX-XXXX-XXXX 或连续12位大写字母数字）" };
     }
     if (!window.VALID_CODES.includes(upperCode)) {
         return { valid: false, message: "兑换码不存在" };
@@ -58,7 +58,6 @@ function validateCode(code) {
     return { valid: true, message: "验证通过", code: upperCode };
 }
 
-// 标记兑换码为已使用
 function markCodeAsUsed(code) {
     const upperCode = code.toUpperCase();
     if (!window.USED_CODES.includes(upperCode)) {
@@ -69,11 +68,9 @@ function markCodeAsUsed(code) {
     return false;
 }
 
-// 导出全局方法
 window.validateCode = validateCode;
 window.markCodeAsUsed = markCodeAsUsed;
 
-// 启动：初始化已使用列表，加载兑换码，完成后触发自定义事件
 (async function() {
     initUsedCodes();
     await loadCodes();

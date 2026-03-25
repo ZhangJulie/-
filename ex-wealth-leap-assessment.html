@@ -254,6 +254,7 @@
             padding: 12px;
             font-weight: 500;
             cursor: pointer;
+            white-space: normal;
         }
         .modal-btn:hover {
             background: #e6edf4;
@@ -290,6 +291,7 @@
             font-weight: 500;
             text-align: center;
             white-space: normal;
+            line-height: 1.4;
         }
 
         .radar-wrapper {
@@ -638,9 +640,9 @@
             <div class="modal-content">
                 <h3>你对前任的态度是：</h3>
                 <div class="modal-buttons">
-                    <button class="modal-btn" data-intent="verify">🔍 求证型 · 我是不是分对了？</button>
-                    <button class="modal-btn" data-intent="curious">👀 好奇型 · TA后来过得咋样？</button>
-                    <button class="modal-btn" data-intent="review">🔄 复盘型 · 我怎么总遇到这种人？</button>
+                    <button class="modal-btn" data-intent="verify">🔍 求证型<br>我是不是分对了？</button>
+                    <button class="modal-btn" data-intent="curious">👀 好奇型<br>TA后来过得咋样？</button>
+                    <button class="modal-btn" data-intent="review">🔄 复盘型<br>我怎么总遇到这种人？</button>
                 </div>
             </div>
         `;
@@ -702,11 +704,12 @@
         return { totalScore: total, avgConfidence };
     }
 
+    // 修改所有带·的文本，用<br>换行替代
     function getInterpretation(score) {
-        if (score >= 4.2) return "🚀 高概率跃迁 · 财富阶层突破潜力极强";
-        if (score >= 3.5) return "📈 有明显潜力 · 未来3-5年大概率上台阶";
-        if (score >= 2.8) return "⚖️ 不确定 · 存在变量，需关键事件触发";
-        return "⚠️ 跃迁阻力较大 · 需底层能力重构";
+        if (score >= 4.2) return "🚀 高概率跃迁<br>财富阶层突破潜力极强";
+        if (score >= 3.5) return "📈 有明显潜力<br>未来3-5年大概率上台阶";
+        if (score >= 2.8) return "⚖️ 不确定<br>存在变量，需关键事件触发";
+        return "⚠️ 跃迁阻力较大<br>需底层能力重构";
     }
 
     function getPopulationAndPortrait(score) {
@@ -809,7 +812,7 @@
         const population = getPopulationAndPortrait(totalScore);
         const lowest = findLowestModule(moduleScores);
         const adviceText = getAdviceByIntentAndScore(selectedIntent, totalScore, avgConfidence, lowest, moduleScores);
-        const adviceTitle = selectedIntent === 'verify' ? '🔍 求证型 · 心态建议' : (selectedIntent === 'curious' ? '👀 好奇型 · 心态建议' : '🔄 复盘型 · 心态建议');
+        const adviceTitle = selectedIntent === 'verify' ? '🔍 求证型<br>心态建议' : (selectedIntent === 'curious' ? '👀 好奇型<br>心态建议' : '🔄 复盘型<br>心态建议');
 
         const radarLabels = ['人力资本 A', '认知决策 B', '执行力 C', '外部环境 D', '社会资本 E', '关系影响 F'];
         const radarData = [moduleScores.A, moduleScores.B, moduleScores.C, moduleScores.D, moduleScores.E, moduleScores.F];

@@ -216,40 +216,53 @@
             color: white;
         }
 
-        /* 意图选择器样式 */
-        .intent-selector {
-            background: #f9fafc;
-            border-radius: 28px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
+            justify-content: center;
+            z-index: 1000;
         }
-        .intent-label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #2c6280;
+        .modal-content {
+            background: white;
+            border-radius: 36px;
+            max-width: 320px;
+            width: 85%;
+            padding: 28px 24px;
+            text-align: center;
+            animation: fadeIn 0.2s;
         }
-        .intent-buttons {
+        .modal-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+        .modal-buttons {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
         }
-        .intent-btn {
-            background: #eef2f8;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
+        .modal-btn {
+            background: #f4f8fe;
+            border: 1px solid #cde0ed;
+            border-radius: 60px;
+            padding: 12px;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.1s;
         }
-        .intent-btn.active {
+        .modal-btn:hover {
+            background: #e6edf4;
+        }
+        .modal-btn-primary {
             background: #1f6e8c;
             color: white;
+            border: none;
         }
 
         /* 结果页样式 */
@@ -428,15 +441,6 @@
         <div class="quiz-header">
             <h2>💔 分手后，TA的身价会涨吗？</h2>
         </div>
-        <!-- 意图选择器 -->
-        <div class="intent-selector">
-            <span class="intent-label">📌 本次评估意图：</span>
-            <div class="intent-buttons">
-                <button class="intent-btn" data-intent="verify">求证型</button>
-                <button class="intent-btn" data-intent="curious">好奇型</button>
-                <button class="intent-btn" data-intent="review">复盘型</button>
-            </div>
-        </div>
         <div class="progress-area">
             <div class="progress-text"><span id="currentQNumber">第1题</span><span id="totalQCount">/21</span></div>
             <div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div>
@@ -448,10 +452,10 @@
         </div>
     </div>
 
-    <!-- 结果页（无重新评估按钮） -->
+    <!-- 结果页 -->
     <div id="resultPage" class="page card hidden">
         <div id="resultContent"></div>
-        <footer>评估基于你提供的21项数据 · 不可回溯修改</footer>
+        <!-- 已移除底部提示文字 -->
     </div>
 </div>
 
@@ -484,7 +488,6 @@
     const moduleWeights = { A: 0.30, B: 0.20, C: 0.25, D: 0.10, E: 0.10, F: 0.05 };
     const moduleNames = { A: '人力资本', B: '认知与决策', C: '执行力', D: '外部环境', E: '社会资本', F: '关系影响' };
 
-    // 评分描述映射
     const scoreDesc = { 1: '明显较差', 2: '偏弱', 3: '一般', 4: '较强', 5: '很强' };
     const confDesc = {
         1: '纯属猜测',
@@ -494,14 +497,11 @@
         5: '非常确定'
     };
 
-    // 答案存储，score 初始 null，confidence 默认 3
     let answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
     let currentIndex = 0;
     let radarChartInstance = null;
-    let selectedIntent = 'curious'; // 默认好奇型
-    let autoJumpEnabled = true; // 自动跳转标志，防止重复触发
+    let selectedIntent = null; // 将在最后选择
 
-    // DOM 元素
     const introPage = document.getElementById('introPage');
     const quizPage = document.getElementById('quizPage');
     const resultPage = document.getElementById('resultPage');
@@ -513,29 +513,11 @@
     const totalQCountSpan = document.getElementById('totalQCount');
     const progressFill = document.getElementById('progressFill');
 
-    // 意图选择器事件绑定
-    function initIntentSelector() {
-        const intentBtns = document.querySelectorAll('.intent-btn');
-        intentBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const intent = btn.getAttribute('data-intent');
-                selectedIntent = intent;
-                intentBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-        // 默认激活好奇型
-        document.querySelector('.intent-btn[data-intent="curious"]').classList.add('active');
-    }
-
     function showPage(pageId) {
         introPage.classList.add('hidden');
         quizPage.classList.add('hidden');
         resultPage.classList.add('hidden');
         document.getElementById(pageId).classList.remove('hidden');
-        if (pageId === 'quizPage') {
-            initIntentSelector(); // 每次显示测试页时重新绑定意图选择器（因为动态渲染会重置）
-        }
     }
 
     function updateProgress() {
@@ -551,12 +533,10 @@
         const range = [1, 2, 3, 4, 5];
         for (let val of range) {
             const activeClass = (currentValue === val) ? 'active' : '';
-            const numberLabel = val;
-            const descText = map[val];
             items += `
                 <div class="option-btn ${activeClass}" data-type="${type}" data-val="${val}">
-                    <span class="option-number">${numberLabel}</span>
-                    <span class="option-desc">${descText}</span>
+                    <span class="option-number">${val}</span>
+                    <span class="option-desc">${map[val]}</span>
                 </div>
             `;
         }
@@ -594,20 +574,17 @@
             btn.addEventListener('click', (e) => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
                 if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: 3 };
-                const wasNull = answers[currentIndex].score === null;
                 answers[currentIndex].score = val;
                 updateCurrentQuestionUI();
-                // 自动跳转：如果之前没有评分（首次选择）或用户回溯修改，都自动跳转
-                if (autoJumpEnabled) {
-                    if (currentIndex + 1 < TOTAL_QS) {
-                        // 不是最后一题，跳转到下一题
-                        currentIndex++;
-                        updateProgress();
-                        renderCurrentQuestion();
-                    } else {
-                        // 最后一题，完成评估
-                        finishAndShowResult();
-                    }
+                // 自动跳转
+                if (currentIndex + 1 < TOTAL_QS) {
+                    // 不是最后一题，跳转到下一题
+                    currentIndex++;
+                    updateProgress();
+                    renderCurrentQuestion();
+                } else {
+                    // 最后一题，先询问意图再生成结果
+                    showIntentModal();
                 }
             });
         });
@@ -627,13 +604,11 @@
         const selectedScore = ans?.score;
         const selectedConf = ans?.confidence;
 
-        // 更新评分按钮高亮
         document.querySelectorAll('.option-btn[data-type="score"]').forEach(btn => {
             const val = parseInt(btn.getAttribute('data-val'), 10);
             if (val === selectedScore) btn.classList.add('active');
             else btn.classList.remove('active');
         });
-        // 更新置信度按钮高亮
         document.querySelectorAll('.option-btn[data-type="confidence"]').forEach(btn => {
             const val = parseInt(btn.getAttribute('data-val'), 10);
             if (val === selectedConf) btn.classList.add('active');
@@ -648,12 +623,9 @@
 
     function goToPrev() {
         if (currentIndex > 0) {
-            // 关闭自动跳转标志，防止回溯时自动前进
-            autoJumpEnabled = false;
             currentIndex--;
             updateProgress();
             renderCurrentQuestion();
-            autoJumpEnabled = true; // 恢复自动跳转
         } else {
             alert('已是第一题');
         }
@@ -665,17 +637,42 @@
             return;
         }
         if (currentIndex + 1 < TOTAL_QS) {
-            autoJumpEnabled = false;
             currentIndex++;
             updateProgress();
             renderCurrentQuestion();
-            autoJumpEnabled = true;
         } else {
-            finishAndShowResult();
+            // 最后一题，询问意图
+            showIntentModal();
         }
     }
 
+    function showIntentModal() {
+        // 创建模态框
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>你对前任的态度是：</h3>
+                <div class="modal-buttons">
+                    <button class="modal-btn" data-intent="verify">🔍 求证型 · 我是不是分对了？</button>
+                    <button class="modal-btn" data-intent="curious">👀 好奇型 · TA后来过得咋样？</button>
+                    <button class="modal-btn" data-intent="review">🔄 复盘型 · 我怎么总遇到这种人？</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        // 绑定按钮事件
+        modal.querySelectorAll('.modal-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedIntent = btn.getAttribute('data-intent');
+                modal.remove();
+                finishAndShowResult();
+            });
+        });
+    }
+
     function finishAndShowResult() {
+        // 检查所有答案完整性
         for (let i = 0; i < TOTAL_QS; i++) {
             if (!answers[i] || answers[i].score === null) {
                 alert(`第${i + 1}题评分未填写，请返回完成。`);
@@ -730,6 +727,7 @@
         return "⚠️ 跃迁阻力较大 · 需底层能力重构";
     }
 
+    // 新人群分布
     function getPopulationAndPortrait(score) {
         if (score >= 4.2) {
             return {
@@ -743,17 +741,17 @@
             };
         } else if (score >= 3.5) {
             return {
-                label: "前 45% ｜“潜力型”",
+                label: "前 15-45% ｜“潜力型”",
                 desc: "有明显向上空间",
                 portrait: {
                     features: "底子不错，但关键维度有短板",
-                    scenario: "常见短板分布：50%缺杠杆意识，35%缺财务知识，30%缺人脉质量",
+                    scenario: "常见短板分布：绝大部分 缺‘杠杆与规模化倾向’ / 大部分 缺‘财务知识与金钱心态’ / 部分 缺‘人脉质量’",
                     sketch: "上限高但波动大，能否跃迁取决于短板能否补上"
                 }
             };
         } else if (score >= 2.8) {
             return {
-                label: "中部 40% ｜“平稳型”",
+                label: "前 45-85% ｜“平稳型”",
                 desc: "跃迁不确定，可能维持现状",
                 portrait: {
                     features: "各维度中规中矩，无明显短板也无突出长板",
@@ -899,7 +897,7 @@
     function fullReset() {
         answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
         currentIndex = 0;
-        autoJumpEnabled = true;
+        selectedIntent = null;
         if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
         showPage('introPage');
     }
@@ -907,13 +905,12 @@
     function initQuiz() {
         answers = Array(TOTAL_QS).fill(null).map(() => ({ score: null, confidence: 3 }));
         currentIndex = 0;
-        autoJumpEnabled = true;
+        selectedIntent = null;
         updateProgress();
         renderCurrentQuestion();
         showPage('quizPage');
     }
 
-    // 事件绑定
     startBtn.addEventListener('click', () => {
         fullReset();
         initQuiz();

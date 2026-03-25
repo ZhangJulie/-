@@ -1139,8 +1139,20 @@ window.USED_CODES = (function() {
 
 // 验证兑换码（格式、是否存在、是否已使用）
 function validateCode(code) {
-    if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+// 定义两种允许的格式
+    const format1 = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/; // 三段式
+    const format2 = /^[A-Z0-9]{12}$/;                           // 连续12位
+
+    if (!format1.test(code) && !format2.test(code)) {
         return { valid: false, message: "无效的兑换码格式" };
+    }
+    if (!window.VALID_CODES.includes(code)) {
+        return { valid: false, message: "兑换码不存在" };
+    }
+    if (window.USED_CODES.includes(code)) {
+        return { valid: false, message: "该兑换码已使用过" };
+    }
+    return { valid: true, message: "验证通过" };
     }
     if (!window.VALID_CODES.includes(code)) {
         return { valid: false, message: "兑换码不存在" };

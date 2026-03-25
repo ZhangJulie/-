@@ -50,7 +50,7 @@
         }
 
         h1 {
-            font-size: 1.5rem;  /* 比之前小2号 */
+            font-size: 1.5rem;
             font-weight: 700;
             line-height: 1.3;
             background: linear-gradient(135deg, #1e4b6e, #2c7aa0);
@@ -158,7 +158,7 @@
         }
 
         .option-btn {
-            flex: 0 0 62px; /* 固定宽度，保证5个按钮等宽 */
+            flex: 0 0 62px;
             background: #f4f8fe;
             border: 1px solid #cde0ed;
             border-radius: 28px;
@@ -216,7 +216,6 @@
             color: white;
         }
 
-        /* 模态框样式 */
         .modal {
             position: fixed;
             top: 0;
@@ -260,7 +259,6 @@
             background: #e6edf4;
         }
 
-        /* 结果页样式 */
         .result-score-card {
             background: linear-gradient(120deg, #eef5fc, #ffffff);
             border-radius: 32px;
@@ -566,24 +564,16 @@
         `;
         quizContent.innerHTML = html;
 
-        // 绑定评分按钮事件（自动跳转）
+        // 评分按钮：仅保存答案，不自动跳转
         document.querySelectorAll('.option-btn[data-type="score"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
                 if (!answers[currentIndex]) answers[currentIndex] = { score: null, confidence: 3 };
                 answers[currentIndex].score = val;
                 updateCurrentQuestionUI();
-                // 自动跳转
-                if (currentIndex + 1 < TOTAL_QS) {
-                    currentIndex++;
-                    updateProgress();
-                    renderCurrentQuestion();
-                } else {
-                    showIntentModal();
-                }
             });
         });
-        // 绑定置信度按钮事件（不自动跳转）
+        // 置信度按钮：仅保存答案，不跳转
         document.querySelectorAll('.option-btn[data-type="confidence"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
@@ -636,6 +626,7 @@
             updateProgress();
             renderCurrentQuestion();
         } else {
+            // 最后一题，询问意图
             showIntentModal();
         }
     }

@@ -50,7 +50,7 @@
         }
 
         h1 {
-            font-size: 1.7rem;
+            font-size: 1.5rem;  /* 比之前小2号 */
             font-weight: 700;
             line-height: 1.3;
             background: linear-gradient(135deg, #1e4b6e, #2c7aa0);
@@ -154,18 +154,18 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 8px;
+            justify-content: space-between;
         }
 
         .option-btn {
-            flex: 1 0 70px;
+            flex: 0 0 62px; /* 固定宽度，保证5个按钮等宽 */
             background: #f4f8fe;
             border: 1px solid #cde0ed;
             border-radius: 28px;
-            padding: 8px 4px;
+            padding: 8px 0;
             text-align: center;
             cursor: pointer;
             transition: 0.1s;
-            min-width: 64px;
         }
 
         .option-btn.active {
@@ -259,11 +259,6 @@
         .modal-btn:hover {
             background: #e6edf4;
         }
-        .modal-btn-primary {
-            background: #1f6e8c;
-            color: white;
-            border: none;
-        }
 
         /* 结果页样式 */
         .result-score-card {
@@ -296,7 +291,7 @@
             margin: 20px 0;
             font-weight: 500;
             text-align: center;
-            white-space: normal; /* 保证文字自动换行 */
+            white-space: normal;
         }
 
         .radar-wrapper {
@@ -424,7 +419,7 @@
 </head>
 <body>
 <div class="app-container" id="appRoot">
-    <!-- 说明页 - 已更新 -->
+    <!-- 说明页 -->
     <div id="introPage" class="page card">
         <h1>分手后，TA的身价会涨吗？<br><span style="font-size: 1rem;">基于风控模型的潜力评估（前任已就业版）</span></h1>
         <div class="sub">前任财富跃迁概率评估问卷</div>
@@ -439,7 +434,7 @@
         <footer>21个维度 | 每题需选评分（置信度已默认3）</footer>
     </div>
 
-    <!-- 测试页 (逐题模式) -->
+    <!-- 测试页 -->
     <div id="quizPage" class="page card hidden">
         <div class="quiz-header">
             <h2>分手后，TA的身价会涨吗？</h2>
@@ -584,7 +579,6 @@
                     updateProgress();
                     renderCurrentQuestion();
                 } else {
-                    // 最后一题，先询问意图再生成结果
                     showIntentModal();
                 }
             });
@@ -780,7 +774,6 @@
         return { module: minMod, name: moduleNames[minMod], score: minScore };
     }
 
-    // 根据意图和得分区间返回详细建议
     function getAdviceByIntentAndScore(intent, totalScore, avgConfidence, lowestModule, moduleScores) {
         const category = totalScore >= 4.2 ? 'high' : (totalScore >= 3.5 ? 'midHigh' : (totalScore >= 2.8 ? 'midLow' : 'low'));
         
@@ -848,7 +841,7 @@
             </div>
             
             <div class="portrait-card">
-                <h4>🎭 典型画像 · ${population.label.split('｜')[1]}</h4>
+                <h4>🎭 典型画像 ${population.label.split('｜')[1]}</h4>
                 <p><strong>特征：</strong>${population.portrait.features}</p>
                 <p><strong>常见场景：</strong>${population.portrait.scenario}</p>
                 <p><strong>画像速写：</strong>${population.portrait.sketch}</p>
